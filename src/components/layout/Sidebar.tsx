@@ -20,12 +20,12 @@ export default function Sidebar() {
   }, []);
 
   const menuItems = [
-    { name: "Intelligence", href: "/dashboard", icon: <LayoutDashboard size={20} />, badge: "Safe" },
-    { name: "Patient Registry", href: "/profiles", icon: <Users size={20} /> },
-    { name: "Neural Assistant", href: "/assistant", icon: <Brain size={20} />, pulse: true },
-    { name: "Molecular Vault", href: "/vault", icon: <Database size={20} /> },
-    { name: "Clinical Checker", href: "/checker", icon: <Shield size={20} /> },
-    { name: "Vision Scanner", href: "/scanner", icon: <Microscope size={20} /> },
+    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} />, badge: "Active" },
+    { name: "Patient Profiles", href: "/profiles", icon: <Users size={20} /> },
+    { name: "AI Assistant", href: "/assistant", icon: <Brain size={20} />, pulse: true },
+    { name: "Medication Vault", href: "/vault", icon: <Database size={20} /> },
+    { name: "Interaction Checker", href: "/checker", icon: <Shield size={20} /> },
+    { name: "Prescription Scanner", href: "/scanner", icon: <Microscope size={20} /> },
   ];
 
   if (!mounted || pathname === "/") return null;
@@ -61,7 +61,7 @@ export default function Sidebar() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-black tracking-tighter text-white">MediSafe <span className="text-primary italic">AI</span></span>
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">Clinical Node</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">Healthcare Platform</span>
                 </div>
               </Link>
             </div>
@@ -83,7 +83,7 @@ export default function Sidebar() {
             {/* Main Navigation */}
             <nav className="flex-1 px-6 space-y-2 relative z-20">
               <div className="px-4 pb-4">
-                 <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em]">Main Protocol</p>
+                 <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.5em]">Navigation</p>
               </div>
               {menuItems.map((item) => {
                 const isActive = pathname === item.href;
@@ -146,8 +146,8 @@ export default function Sidebar() {
                                 <Plus size={24} />
                             </div>
                             <div>
-                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Neural Expansion</h4>
-                                <p className="text-[9px] font-bold text-slate-500">Upgrade Clinical Tier</p>
+                                <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Premium Support</h4>
+                                <p className="text-[9px] font-bold text-slate-500">Upgrade for more features</p>
                             </div>
                          </div>
                          <button className="w-full h-12 bg-white/5 text-white/40 text-[9px] font-black uppercase tracking-[0.3em] rounded-xl hover:bg-primary hover:text-white transition-all">Enable Pro Mode</button>
@@ -160,7 +160,7 @@ export default function Sidebar() {
                     </div>
                     <div className="flex flex-col flex-1">
                         <span className="text-xs font-black text-white group-hover:text-primary transition-colors">Dr. Alex Doe</span>
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Case Admin</span>
+                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Lead Provider</span>
                     </div>
                     <button className="text-slate-700 hover:text-white transition-colors">
                         <LogOut size={18} />

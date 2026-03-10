@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Calendar, Bell, Search, ChevronDown, Sparkles } from "lucide-react";
+import { Calendar, Bell, Search, ChevronDown, Sparkles, Activity, Shield } from "lucide-react";
+import Link from "next/link";
 
 interface PremiumDashboardLayoutProps {
     children: React.ReactNode;
@@ -11,59 +12,73 @@ interface PremiumDashboardLayoutProps {
 export default function PremiumDashboardLayout({ children, userName = "Alex Doe" }: PremiumDashboardLayoutProps) {
     return (
         <div className="relative min-h-screen">
-            {/* Premium Gradient Top Shell */}
-            <div className="dashboard-shell"></div>
-            
-            {/* Background Texture Overlay */}
-            <div className="fixed inset-0 pointer-events-none opacity-[0.02] z-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-
             {/* Header / Top Navigation */}
-            <header className="mb-16 animate-fade relative z-20">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
-                    <div className="space-y-5">
-                        <div className="flex items-center gap-3 text-primary bg-primary/10 w-fit px-6 py-2.5 rounded-full border border-primary/20 backdrop-blur-3xl shadow-[0_0_40px_rgba(37,99,235,0.1)] mb-2">
-                            <Sparkles size={18} className="animate-pulse text-primary shadow-glow" />
-                            <span className="text-[12px] font-black uppercase tracking-[0.4em]">Clinical Intelligence Console 3.0</span>
+            {/* Teal Gradient Header Background Area */}
+            <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-br from-teal-500/10 via-primary/5 to-transparent z-0 pointer-events-none"></div>
+
+            {/* Top Navigation Bar */}
+            <nav className="relative z-30 h-20 flex items-center justify-between px-12 border-b border-white/5 bg-white/[0.01] backdrop-blur-md mb-12">
+                <div className="flex items-center gap-12">
+                     <Link href="/" className="group flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20 shadow-lg shadow-primary/10">
+                            <Shield size={20} />
                         </div>
-                        <h1 className="text-7xl font-black text-white tracking-tighter leading-[0.9] drop-shadow-2xl">
-                            MediSafe <span className="text-gradient">Console.</span>
+                        <span className="text-xl font-black text-white tracking-tighter uppercase grayscale group-hover:grayscale-0 transition-all">
+                            MediSafe <span className="text-primary italic">AI</span>
+                        </span>
+                    </Link>
+
+                    {/* Navigation Tabs */}
+                    <div className="hidden lg:flex items-center gap-8 ml-8">
+                        {['Overview', 'Patient Safety', 'Interactions', 'Analytics'].map((tab) => (
+                            <button 
+                                key={tab} 
+                                className={`text-[11px] font-bold uppercase tracking-widest transition-all ${tab === 'Overview' ? 'text-primary' : 'text-slate-500 hover:text-white'}`}
+                            >
+                                {tab}
+                                {tab === 'Overview' && <div className="h-0.5 w-full bg-primary mt-1 rounded-full"></div>}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                    <button className="text-slate-500 hover:text-white transition-colors">
+                        <Search size={20} />
+                    </button>
+                    <button className="text-slate-500 hover:text-white transition-colors relative">
+                        <Bell size={20} />
+                        <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full border border-[#050a14]"></span>
+                    </button>
+                    <div className="h-6 w-[1px] bg-white/10 mx-2"></div>
+                    <div className="flex items-center gap-3 group cursor-pointer">
+                        <div className="text-right hidden sm:block">
+                            <p className="text-[10px] font-black text-white uppercase tracking-widest">{userName}</p>
+                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest opacity-60">Provider</p>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-grad-primary border border-white/10 flex items-center justify-center text-white font-black text-xs shadow-xl group-hover:scale-105 transition-transform">
+                            {userName.split(' ').map(n => n[0]).join('')}
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            {/* Dashboard Title & Welcome Section */}
+            <header className="mb-12 animate-fade relative z-20 px-12">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-black text-white tracking-tight">
+                            Medication Safety Overview
                         </h1>
-                        <p className="text-slate-500 font-bold text-xl flex items-center gap-4 pl-1">
-                            <Calendar size={24} className="text-slate-700" />
-                            Session Active • {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                        <p className="text-slate-500 font-medium mt-1 flex items-center gap-3">
+                             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                             <span className="w-1.5 h-1.5 bg-slate-700 rounded-full"></span>
+                             System Audit: <span className="text-emerald-500 font-bold uppercase tracking-tighter">Nominal</span>
                         </p>
                     </div>
-
-                    <div className="flex items-center gap-8">
-                        {/* Status Hub */}
-                        <div className="hidden xl:flex items-center gap-4 px-10 py-5 bg-white/[0.03] rounded-[32px] border border-white/5 backdrop-blur-3xl shadow-3xl">
-                            <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse-slow shadow-[0_0_15px_#10b981]"></div>
-                            <span className="text-[12px] font-black uppercase tracking-[0.4em] text-emerald-500/80">Bio-Metric Protocol: NOMINAL</span>
-                        </div>
-
-                        {/* Interactive Controls */}
-                        <div className="flex items-center gap-5 bg-white/[0.03] p-2.5 rounded-[40px] border border-white/5 backdrop-blur-3xl shadow-4xl hover:border-white/10 transition-colors">
-                             <button className="relative w-16 h-16 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all group hover:bg-white/10">
-                                <Search size={28} className="group-hover:scale-110 transition-transform" />
-                            </button>
-                            <button className="relative w-16 h-16 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-center text-slate-500 hover:text-white transition-all group hover:bg-white/10">
-                                <Bell size={28} className="group-hover:rotate-12 transition-transform" />
-                                <span className="absolute top-5 right-5 w-3 h-3 bg-rose-500 rounded-full border-2 border-[#050a14] shadow-lg shadow-rose-500/20"></span>
-                            </button>
-                            <div className="h-12 w-[1px] bg-white/10 mx-3 opacity-50"></div>
-                            
-                            {/* Identity Sector */}
-                            <div className="flex items-center gap-5 pr-8 pl-2 group cursor-pointer hover:bg-white/5 py-2 rounded-3xl transition-all">
-                                <div className="w-14 h-14 rounded-[20px] bg-grad-primary flex items-center justify-center text-white font-black text-lg shadow-[0_0_30px_rgba(37,99,235,0.4)] group-hover:scale-105 transition-transform">
-                                    {userName.split(' ').map(n => n[0]).join('')}
-                                </div>
-                                <div className="hidden sm:block">
-                                    <p className="text-sm font-black text-white leading-none mb-2">{userName}</p>
-                                    <p className="text-[10px] font-black uppercase text-slate-600 tracking-[0.3em] italic opacity-80">Chief Administrator</p>
-                                </div>
-                                <ChevronDown size={20} className="text-slate-800 ml-4 group-hover:translate-y-0.5 transition-transform" />
-                            </div>
-                        </div>
+                    <div className="hidden md:flex items-center gap-3 px-6 py-3 bg-white/[0.02] border border-white/5 rounded-2xl backdrop-blur-md">
+                        <Calendar size={16} className="text-slate-500" />
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Clinical Session Active</span>
                     </div>
                 </div>
             </header>

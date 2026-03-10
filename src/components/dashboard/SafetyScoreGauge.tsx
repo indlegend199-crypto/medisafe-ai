@@ -21,43 +21,41 @@ export default function SafetyScoreGauge({ score, medCount }: SafetyScoreGaugePr
             <div className="absolute -top-24 -left-24 w-64 h-64 bg-teal-500/10 blur-[100px] rounded-full animate-pulse-slow"></div>
             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/10 blur-[100px] rounded-full animate-pulse-slow-reverse"></div>
 
-            <div className="relative z-10 w-full mb-10">
-                <div className="flex items-center justify-center gap-3 mb-3">
-                    <Sparkles size={14} className="text-teal-400 animate-pulse" />
-                    <h3 className="text-[12px] font-black uppercase tracking-[0.4em] text-slate-500">Molecular Safety Index</h3>
+            <div className="relative z-10 w-full mb-10 text-center">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                    <Shield size={16} className="text-primary" />
+                    <h3 className="text-[13px] font-bold uppercase tracking-widest text-slate-400">Medication Safety Score</h3>
                 </div>
-                <div className="h-[2px] w-24 bg-gradient-to-r from-transparent via-teal-500/30 to-transparent mx-auto"></div>
             </div>
 
-            <div className="relative w-80 h-80 mb-12">
+            <div className="relative w-80 h-80 mb-8">
                 {/* Advanced Glowing Rings */}
-                <div className="absolute inset-[-30px] rounded-full bg-teal-500/10 blur-[60px] opacity-0 group-hover:opacity-100 transition-all duration-1000"></div>
-                <div className="absolute inset-[-10px] rounded-full border border-white/5 backdrop-blur-3xl shadow-[inset_0_0_40px_rgba(255,255,255,0.02)]"></div>
+                <div className="absolute inset-[-20px] rounded-full bg-primary/5 blur-[40px] opacity-0 group-hover:opacity-100 transition-all duration-1000"></div>
+                <div className="absolute inset-0 rounded-full border border-white/5 backdrop-blur-md shadow-inner"></div>
                 
-                <svg className="w-full h-full transform -rotate-90 filter drop-shadow-[0_0_15px_rgba(13,148,136,0.3)]">
+                <svg className="w-full h-full transform -rotate-90">
                     {/* Background Track */}
                     <circle
                         cx="160" cy="160" r="125"
                         fill="none"
-                        stroke="rgba(255,255,255,0.03)"
-                        strokeWidth="20"
+                        stroke="rgba(255,255,255,0.02)"
+                        strokeWidth="18"
                     />
                     {/* Animated Progress Arc */}
                     <motion.circle
                         initial={{ strokeDasharray: "0 1000" }}
                         animate={{ strokeDasharray }}
-                        transition={{ duration: 3, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+                        transition={{ duration: 2.5, ease: "easeOut", delay: 0.3 }}
                         cx="160" cy="160" r="125"
                         fill="none"
-                        stroke="url(#teal-green-grad)"
-                        strokeWidth="22"
+                        stroke="url(#saas-grad)"
+                        strokeWidth="20"
                         strokeLinecap="round"
-                        className="relative z-10"
                     />
                     <defs>
-                        <linearGradient id="teal-green-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#0d9488" />
-                            <stop offset="100%" stopColor="#10b981" />
+                        <linearGradient id="saas-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#0ea5e9" />
+                            <stop offset="100%" stopColor="#14b8a6" />
                         </linearGradient>
                     </defs>
                 </svg>
@@ -65,43 +63,30 @@ export default function SafetyScoreGauge({ score, medCount }: SafetyScoreGaugePr
                 {/* Score Centerpiece */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.5 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                        className="relative"
-                    >
-                        <span className="text-[100px] font-black text-white leading-none tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                            {score}
-                        </span>
-                        <span className="absolute -top-2 -right-6 text-3xl font-black text-teal-400 drop-shadow-[0_0_10px_rgba(20,184,166,0.5)]">%</span>
-                    </motion.div>
-                    
-                    <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.5 }}
-                        className="mt-4 px-8 py-2.5 bg-emerald-500/15 border border-emerald-500/30 rounded-full flex items-center gap-3 backdrop-blur-xl shadow-lg"
+                        className="text-center"
                     >
-                        <Shield size={14} className="text-emerald-400" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-400">System Balanced</span>
+                        <div className="flex items-baseline justify-center">
+                             <span className="text-8xl font-black text-white tracking-tight">
+                                {score}
+                            </span>
+                            <span className="text-2xl font-bold text-primary ml-1">%</span>
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 italic opacity-60">Verified Index</p>
                     </motion.div>
                 </div>
             </div>
 
             {/* Metrics Bottom Row */}
-            <div className="relative z-10 grid grid-cols-2 gap-12 w-full pt-12 border-t border-white/5 mt-auto">
-                <div className="text-left space-y-2">
-                    <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] opacity-60">Medication Density</p>
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-teal-500/10 rounded-lg border border-teal-500/20">
-                            <Shield size={14} className="text-teal-400" />
-                        </div>
-                        <p className="text-3xl font-black text-white italic">{medCount} <span className="text-[10px] font-normal text-slate-500 not-italic uppercase tracking-widest pl-1">Agents</span></p>
-                    </div>
+            <div className="relative z-10 grid grid-cols-2 gap-8 w-full items-center pt-8 border-t border-white/5 mt-auto">
+                <div className="text-center space-y-1">
+                    <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Active Meds</p>
+                    <p className="text-2xl font-black text-white">{medCount}</p>
                 </div>
-                <div className="text-right space-y-2">
-                    <p className="text-[10px] font-black uppercase text-slate-500 tracking-[0.3em] opacity-60">Audit Fidelity</p>
-                    <p className="text-3xl font-black text-white italic">99<span className="text-teal-500">.</span>9<span className="text-xs font-normal text-slate-500 not-italic uppercase tracking-widest">%</span></p>
+                <div className="text-center space-y-1">
+                    <p className="text-[9px] font-bold uppercase text-slate-500 tracking-widest">Accuracy</p>
+                    <p className="text-2xl font-black text-white">99.9%</p>
                 </div>
             </div>
         </section>

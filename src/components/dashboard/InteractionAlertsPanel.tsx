@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, Filter, MoreHorizontal } from "lucide-react";
+import { Brain, Filter, MoreHorizontal, Shield } from "lucide-react";
 import InteractionAlertCard from "./InteractionAlertCard";
 
 interface Alert {
@@ -17,25 +17,25 @@ interface InteractionAlertsPanelProps {
 
 export default function InteractionAlertsPanel({ alerts }: InteractionAlertsPanelProps) {
     return (
-        <section className="card-premium h-full flex flex-col !p-12 overflow-hidden relative group">
-            {/* Background Molecular Graphic */}
-            <div className="absolute top-0 right-0 p-24 opacity-5 pointer-events-none -rotate-12 translate-x-12 -translate-y-12 transition-transform duration-1000 group-hover:scale-110">
-                 <Brain size={400} className="text-primary" />
+        <section className="card-premium h-full flex flex-col !p-8 overflow-hidden relative group">
+            {/* Background Texture */}
+            <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-1000">
+                 <Shield size={300} className="text-primary" />
             </div>
             
-            <div className="flex items-center justify-between mb-12 relative z-10">
+            <div className="flex items-center justify-between mb-8 relative z-10">
                 <div>
-                    <h3 className="text-3xl font-black text-white tracking-tight flex items-center gap-5">
-                        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary border border-primary/20 shadow-lg shadow-primary/10">
-                            <Brain size={28} />
+                    <h3 className="text-2xl font-black text-white tracking-tight flex items-center gap-4">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
+                            <Shield size={22} />
                         </div>
-                        Real-time Intelligence
+                        Real-Time Interaction Alerts
                     </h3>
-                    <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.5em] mt-3 pl-1">Active Neural Pharmacological Feed</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 pl-1">Live Medication Conflict Feed</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <button className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 hover:text-white transition-all hover:bg-white/10 hover:border-white/10">
-                        <Filter size={16} /> Matrix Stats
+                        <Filter size={16} /> Analysis History
                     </button>
                     <button className="p-3 bg-white/5 rounded-2xl border border-white/5 text-slate-600 hover:text-white transition-all">
                         <MoreHorizontal size={20} />
