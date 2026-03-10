@@ -2,341 +2,271 @@
 
 import { useState, useEffect } from "react";
 import {
-    Shield, Activity, Calendar, AlertCircle, Pill,
+    Activity, Calendar, AlertCircle, Pill,
     ChevronRight, Brain, Clock, Plus, ArrowUpRight,
     User, CheckCircle, Info, X, Camera, Search, HelpCircle, Users,
     ChevronDown, AlertTriangle, TrendingUp, Filter, MoreHorizontal,
-    History as HistoryIcon
+    History as HistoryIcon, Bell, Sparkles, Database, Microscope, Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import PremiumDashboardLayout from "@/components/dashboard/PremiumDashboardLayout";
+import SafetyScoreGauge from "@/components/dashboard/SafetyScoreGauge";
+import InteractionAlertsPanel from "@/components/dashboard/InteractionAlertsPanel";
 
 export default function DashboardPage() {
-    const [safetyScore, setSafetyScore] = useState(92);
+    const [safetyScore, setSafetyScore] = useState(94);
     const [vaultMeds, setVaultMeds] = useState<any[]>([]);
 
     useEffect(() => {
         const saved = localStorage.getItem("medisafe_vault");
         if (saved) setVaultMeds(JSON.parse(saved));
+        
+        // Simulating medical intelligence loading
+        const timer = setTimeout(() => {
+            setSafetyScore(92);
+        }, 1000);
+        return () => clearTimeout(timer);
     }, []);
 
     const alerts = [
-        { type: "Critical", meds: "Warfarin + Ibuprofen", patient: "John Doe", color: "rose" },
-        { type: "Major", meds: "Metformin + Furosemide", patient: "Jane Doe", color: "amber" },
-        { type: "Moderate", meds: "Lisinopril + Spironolactone", patient: "Recent Scan", color: "primary" }
+        { type: "Interaction Hazard", meds: "Warfarin + Ibuprofen", details: "Major pharmacological conflict detected. Vascular stability at risk.", time: "2m ago", severity: "high" as const },
+        { type: "Contraindication", meds: "Metformin + Furosemide", details: "Lactic acidosis biomarkers require immediate synchronization.", time: "15m ago", severity: "medium" as const },
+        { type: "Optimal Protocol", meds: "Lisinopril + Atorvastatin", details: "Cardiovascular synergy verified. Standard dosing continues.", time: "1h ago", severity: "low" as const }
     ];
 
-    const schedule = [
-        { time: "08:00 AM", med: "Atorvastatin", dosage: "20mg", status: "Taken" },
-        { time: "12:30 PM", med: "Metformin", dosage: "500mg", status: "Due" },
-        { time: "06:00 PM", med: "Lisinopril", dosage: "10mg", status: "Upcoming" }
+    const stats = [
+        { label: "Molecular Agents", value: vaultMeds.length || "12", icon: <Pill size={24} />, color: "text-teal-400" },
+        { label: "Intelligence Audits", value: "4,291", icon: <Brain size={24} />, color: "text-blue-400" },
+        { label: "Clinical Profiles", value: "8", icon: <Users size={24} />, color: "text-purple-400" }
     ];
 
     return (
-        <div className="main-content">
-            {/* Hero Section */}
-            <header className="mb-12 animate-fade">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-4xl text-white mb-2">Welcome, <span className="text-gradient">Alex Doe</span></h1>
-                        <p className="text-slate-400 font-medium">Your Medication Safety Overview • {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</p>
+        <PremiumDashboardLayout>
+            <div className="space-y-12 pb-24">
+                {/* Upper Intelligence Hub */}
+                <div className="grid grid-cols-12 gap-12">
+                    {/* Left: Global Safety Score Node */}
+                    <div className="col-span-12 xl:col-span-5 h-[680px]">
+                        <SafetyScoreGauge score={safetyScore} medCount={vaultMeds.length || 12} />
                     </div>
-                    <div className="flex gap-4">
-                        <Link href="/checker" className="btn-primary">
-                            <Plus size={18} /> New Analysis
-                        </Link>
+
+                    {/* Right: Real-time conflict stream */}
+                    <div className="col-span-12 xl:col-span-7 h-[680px]">
+                        <InteractionAlertsPanel alerts={alerts} />
                     </div>
                 </div>
-            </header>
 
-            <div className="dashboard-grid">
-                {/* Safety Score - Circular Gauge */}
-                <div className="col-span-4 h-full">
-                    <section className="card-premium h-full flex flex-col items-center justify-center text-center">
-                        <span className="label-caps mb-8">Medication Safety Score</span>
-                        
-                        <div className="relative w-64 h-64 mb-8">
-                            <svg className="w-full h-full transform -rotate-90">
-                                <circle
-                                    cx="128" cy="128" r="110"
-                                    fill="none"
-                                    stroke="rgba(255,255,255,0.05)"
-                                    strokeWidth="12"
-                                />
-                                <motion.circle
-                                    initial={{ strokeDasharray: "0 1000" }}
-                                    animate={{ strokeDasharray: `${(safetyScore / 100) * 690} 1000` }}
-                                    transition={{ duration: 2, ease: "easeOut" }}
-                                    cx="128" cy="128" r="110"
-                                    fill="none"
-                                    stroke="url(#svg-grad-primary)"
-                                    strokeWidth="12"
-                                    strokeLinecap="round"
-                                />
-                                <defs>
-                                    <linearGradient id="svg-grad-primary" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#2563eb" />
-                                        <stop offset="100%" stopColor="#06b6d4" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <motion.span 
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    className="text-6xl font-black text-white"
-                                >
-                                    {safetyScore}
-                                </motion.span>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald/10 px-3 py-1 rounded-full border border-emerald/20">Excellent</span>
+                {/* Interaction CTA */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.2 }}
+                >
+                    <Link href="/checker" className="group relative w-full h-24 bg-white/[0.02] border border-white/5 rounded-[48px] flex items-center justify-between px-12 overflow-hidden hover:bg-white/[0.04] transition-all hover:border-primary/30 shadow-4xl hover:shadow-primary/10">
+                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+                        <div className="flex items-center gap-10">
+                            <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary group-hover:scale-110 group-hover:rotate-12 transition-all shadow-2xl">
+                                <Microscope size={32} />
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-2xl font-black text-white uppercase tracking-widest italic group-hover:text-primary transition-colors">Initialize Diagnostic Logic</h3>
+                                <p className="text-[10px] font-black uppercase text-slate-600 tracking-[0.6em]">Cross-Reference Primary Molecular Vault</p>
                             </div>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4 w-full pt-8 border-t border-white/5">
-                            <div className="text-left">
-                                <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Meds Monitored</p>
-                                <p className="text-lg font-bold text-white">{vaultMeds.length} Items</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Last Analysis</p>
-                                <p className="text-lg font-bold text-white">2h ago</p>
+                        <div className="flex items-center gap-6">
+                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-700 group-hover:text-white transition-colors">Start Neural Scan</span>
+                            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                                <ChevronRight size={24} />
                             </div>
                         </div>
-                    </section>
-                </div>
+                    </Link>
+                </motion.div>
 
-                {/* Interaction Alerts Panel */}
-                <div className="col-span-8 h-full">
-                    <section className="card-premium h-full overflow-hidden">
-                        <div className="flex items-center justify-between mb-8">
-                            <div>
-                                <h3 className="text-xl text-white">Clinical Interaction Alerts</h3>
-                                <p className="text-xs text-slate-500 font-bold">Priority alerts from monitored patient profiles</p>
+                {/* Tactical Analytics Row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    {stats.map((stat, i) => (
+                        <motion.div 
+                            key={i}
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.4 + (i * 0.1), ease: "easeOut" }}
+                            className="card-premium !p-12 hover:scale-[1.02] transition-transform duration-500 overflow-hidden group"
+                        >
+                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity rotate-12">
+                                {stat.icon}
                             </div>
-                            <button className="p-2 hover:bg-white/5 rounded-xl transition-colors">
-                                <Filter size={18} className="text-slate-400" />
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
-                            {alerts.map((alert, idx) => (
-                                <motion.div 
-                                    key={idx}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className={`flex items-center gap-6 p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-white/[0.04] transition-all group border-l-4 border-l-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}
-                                >
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}/10 text-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}>
-                                        <AlertTriangle size={24} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded bg-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}/10 text-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}>{alert.type}</span>
-                                            <span className="text-xs font-bold text-slate-500">• {alert.patient}</span>
-                                        </div>
-                                        <p className="text-md font-bold text-white leading-tight">{alert.meds}</p>
-                                    </div>
-                                    <button className="opacity-0 group-hover:opacity-100 p-2 bg-white/5 rounded-xl text-slate-400 hover:text-white transition-all">
-                                        <ChevronRight size={18} />
-                                    </button>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </section>
-                </div>
-
-                {/* Medication Schedule Card */}
-                <div className="col-span-8">
-                    <section className="card-premium">
-                        <div className="flex items-center justify-between mb-10">
-                            <h3 className="text-xl text-white flex items-center gap-3">
-                                <Clock className="text-primary" size={22} /> Today's Schedule
-                            </h3>
-                            <button className="text-xs font-black uppercase tracking-widest text-primary hover:underline">View Calendar</button>
-                        </div>
-
-                        <div className="space-y-4">
-                            {schedule.map((item, idx) => (
-                                <div key={idx} className="flex items-center justify-between p-5 rounded-[24px] bg-white/[0.02] border border-white/5 group hover:border-primary/20 transition-all">
-                                    <div className="flex items-center gap-6">
-                                        <div className="text-center w-16 px-3 py-2 bg-white/5 rounded-2xl border border-white/5">
-                                            <p className="text-[10px] font-black text-slate-500 uppercase">Time</p>
-                                            <p className="text-xs font-black text-white">{item.time.split(' ')[0]}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-lg font-black text-white">{item.med}</p>
-                                            <p className="text-xs font-bold text-slate-500">{item.dosage}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${item.status === 'Taken' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-primary/10 text-primary'}`}>
-                                            {item.status}
-                                        </span>
-                                        <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
-                                            <CheckCircle size={20} />
-                                        </button>
-                                    </div>
+                            <div className="flex flex-col gap-6">
+                                <div className={`w-20 h-20 rounded-[32px] bg-white/5 border border-white/5 flex items-center justify-center group-hover:bg-white/10 transition-all duration-700 shadow-3xl ${stat.color}`}>
+                                    {stat.icon}
                                 </div>
-                            ))}
-                        </div>
-                    </section>
+                                <div>
+                                    <p className="text-[11px] font-black uppercase text-slate-600 tracking-[0.5em] mb-3">{stat.label}</p>
+                                    <p className="text-6xl font-black text-white tracking-tighter leading-none">{stat.value}</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
 
-                {/* Quick Actions & Recent Activity */}
-                <div className="col-span-4 space-y-8">
-                    <section className="card-premium">
-                        <h3 className="text-lg text-white mb-6">Quick Actions</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            {[
-                                { name: "Scan Rx", icon: <Camera size={20} />, href: "/scanner" },
-                                { name: "Add Med", icon: <Plus size={20} />, href: "/vault" },
-                                { name: "AI Chat", icon: <Brain size={20} />, href: "/assistant" },
-                                { name: "History", icon: <HistoryIcon size={20} />, href: "/summary" }
-                            ].map((action, i) => (
-                                <Link key={i} href={action.href} className="p-6 rounded-3xl bg-white/5 border border-white/5 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 hover:border-primary/30 transition-all group">
-                                    <div className="text-primary group-hover:scale-110 transition-transform">
-                                        {action.icon}
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white">{action.name}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </section>
-
-                    <section className="card-premium !bg-grad-dark !border-none text-white overflow-hidden relative">
-                         <div className="absolute top-0 right-0 p-8 opacity-10 blur-xl">
-                            <TrendingUp size={200} />
-                        </div>
-                        <div className="relative z-10 flex flex-col h-full justify-between">
-                            <div>
-                                <h3 className="text-xl mb-2">AI Insights</h3>
-                                <p className="text-xs text-slate-400 font-medium leading-relaxed">System has detected 3 potential interaction risks in your family vault. Last scan was optimal.</p>
+                {/* Institutional Bottom Grid */}
+                <div className="grid grid-cols-12 gap-12">
+                    {/* Clinical History Node */}
+                    <div className="col-span-12 lg:col-span-8">
+                        <section className="card-premium !p-12 min-h-[600px] relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-24 opacity-[0.02] pointer-events-none group-hover:opacity-[0.05] transition-opacity">
+                                <HistoryIcon size={600} className="text-white" />
                             </div>
-                            <div className="mt-8">
-                                <Link href="/assistant" className="w-full py-4 bg-white/10 hover:bg-white/20 transition-all rounded-2xl flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest">
-                                    Full Clinical Report <ArrowUpRight size={14} />
-                                </Link>
+                            
+                            <div className="flex flex-col md:flex-row items-center justify-between mb-16 relative z-10 gap-10">
+                                <div>
+                                    <h3 className="text-3xl font-black text-white tracking-tight flex items-center gap-5">
+                                        <HistoryIcon size={32} className="text-primary" /> Temporal Audit Log
+                                    </h3>
+                                    <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.5em] mt-3">Sovereign Transaction Registry</p>
+                                </div>
+                                <div className="flex bg-white/5 p-2 rounded-[28px] border border-white/5 backdrop-blur-3xl shadow-3xl">
+                                    <button className="px-10 py-4 bg-primary text-white text-[11px] font-black uppercase tracking-widest rounded-[20px] shadow-2xl shadow-primary/30">Table View</button>
+                                    <button className="px-10 py-4 text-slate-600 text-[11px] font-black uppercase tracking-widest hover:text-white transition-colors">Visual Graph</button>
+                                </div>
                             </div>
-                        </div>
-                    </section>
-                </div>
 
-                {/* Recent Patients Table */}
-                <div className="col-span-12">
-                    <section className="card-premium">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-xl text-white">Monitored Patient Profiles</h3>
-                            <button className="text-slate-400 hover:text-white"><MoreHorizontal size={20} /></button>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead>
-                                    <tr className="border-b border-white/5 text-[10px] font-black uppercase text-slate-500 tracking-widest">
-                                        <th className="pb-4">Patient Name</th>
-                                        <th className="pb-4">Age / BMI</th>
-                                        <th className="pb-4">Primary Conditions</th>
-                                        <th className="pb-4">Status</th>
-                                        <th className="pb-4 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {[
-                                        { name: "Emily Chen", stats: "28y • 22.4", condition: "Type 2 Diabetes", status: "Balanced" },
-                                        { name: "John Doe", stats: "45y • 26.8", condition: "Hypertension", status: "Review Required" },
-                                        { name: "Jane Foster", stats: "34y • 21.5", condition: "Asthma", status: "Balanced" }
-                                    ].map((row, i) => (
-                                        <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
-                                            <td className="py-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xs font-black text-white border border-white/10">
-                                                        {row.name.charAt(0)}
-                                                    </div>
-                                                    <span className="text-sm font-bold text-white">{row.name}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 text-xs font-bold text-slate-400">{row.stats}</td>
-                                            <td className="py-4">
-                                                <span className="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-[10px] font-black text-slate-300">
-                                                    {row.condition}
-                                                </span>
-                                            </td>
-                                            <td className="py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <div className={`w-2 h-2 rounded-full ${row.status === 'Balanced' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'}`} />
-                                                    <span className="text-xs font-bold text-slate-300">{row.status}</span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4 text-right">
-                                                <button className="text-primary hover:text-white transition-colors"><ArrowUpRight size={18} /></button>
-                                            </td>
+                            <div className="overflow-x-auto relative z-10">
+                                <table className="w-full text-left">
+                                    <thead>
+                                        <tr className="border-b border-white/5 text-[11px] font-black uppercase text-slate-700 tracking-[0.6em]">
+                                            <th className="pb-12 pl-6">Clinical Event</th>
+                                            <th className="pb-12">Domain</th>
+                                            <th className="pb-12">Sync Timestamp</th>
+                                            <th className="pb-12">Status</th>
+                                            <th className="pb-12 text-right pr-6">Action</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/[0.05]">
+                                        {[
+                                            { name: "Vision Decryption", type: "Neural Extraction", time: "Feb 10, 20:42", status: "Verified", icon: <Camera size={20} />, color: "text-teal-400" },
+                                            { name: "Symptom Logic", type: "Bio-Response", time: "Feb 09, 14:15", status: "Nominal", icon: <Activity size={20} />, color: "text-emerald-400" },
+                                            { name: "Conflict Audit", type: "Risk Control", time: "Feb 08, 09:30", status: "Secured", icon: <Shield size={20} />, color: "text-primary" },
+                                            { name: "Archive Sync", type: "Ledger Update", time: "Jan 30, 23:11", status: "Synced", icon: <Database size={20} />, color: "text-purple-400" }
+                                        ].map((row, i) => (
+                                            <tr key={i} className="group hover:bg-white/[0.02] transition-all duration-700">
+                                                <td className="py-12 pl-6">
+                                                    <div className="flex items-center gap-8">
+                                                        <div className={`w-14 h-14 rounded-[20px] bg-white/5 border border-white/5 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all duration-700 shadow-2xl ${row.color}`}>
+                                                            {row.icon}
+                                                        </div>
+                                                        <span className="text-xl font-black text-white group-hover:text-primary transition-colors">{row.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-12">
+                                                    <span className="px-6 py-2 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-500 opacity-80">{row.type}</span>
+                                                </td>
+                                                <td className="py-12 text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">{row.time}</td>
+                                                <td className="py-12">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_15px_#10b981] animate-pulse"></div>
+                                                        <span className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">{row.status}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="py-12 text-right pr-6">
+                                                    <button className="w-14 h-14 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-center text-slate-700 hover:text-primary hover:border-primary/30 transition-all shadow-xl group/btn">
+                                                        <ArrowUpRight size={24} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* Quick Access Node */}
+                    <div className="col-span-12 lg:col-span-4 space-y-12">
+                        {/* Clinical Vault Card */}
+                        <section className="card-premium !bg-grad-dark !border-none relative overflow-hidden h-fit !p-14 group shadow-5xl">
+                             {/* Background Texture */}
+                            <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+                            
+                            <div className="absolute top-0 right-0 p-16 opacity-10 blur-[100px] group-hover:scale-125 transition-transform duration-1000">
+                                <Database size={400} className="text-primary" />
+                            </div>
+                            
+                            <div className="relative z-10 flex flex-col gap-14">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                         <div className="w-3 h-3 rounded-full bg-primary shadow-[0_0_15px_rgba(37,99,235,0.8)]"></div>
+                                         <span className="text-[11px] font-black uppercase tracking-[0.5em] text-primary">Biometric Vault Active</span>
+                                    </div>
+                                    <h3 className="text-5xl font-black text-white tracking-tighter italic leading-none">Clinical Archive</h3>
+                                    <p className="text-xs font-bold text-slate-500 uppercase tracking-[0.4em] mt-6 opacity-60">Protocols: AES-256 Symmetric</p>
+                                </div>
+                                
+                                <Link href="/vault" className="w-full h-20 bg-primary text-white font-black text-[13px] uppercase tracking-[0.4em] rounded-[32px] shadow-[0_20px_60px_-10px_rgba(37,99,235,0.4)] hover:scale-[1.03] transition-all flex items-center justify-center gap-5 hover:bg-blue-500">
+                                    Authorize Access <ArrowUpRight size={24} />
+                                </Link>
+                                <p className="text-center text-[10px] font-black text-slate-700 uppercase tracking-[0.4em]">Multi-Factor Verification Required</p>
+                            </div>
+                        </section>
+
+                        {/* Node Navigator */}
+                        <section className="card-premium !p-12">
+                            <h3 className="text-xl font-black text-white mb-12 uppercase tracking-[0.6em] flex items-center gap-5">
+                                <div className="w-2 h-8 bg-primary rounded-full"></div>
+                                Node Navigator
+                            </h3>
+                            <div className="grid grid-cols-2 gap-8">
+                                 {[
+                                    { name: "Vision Scan", icon: <Camera size={28} />, href: "/scanner", color: "text-teal-400" },
+                                    { name: "Neural AI", icon: <Sparkles size={28} />, href: "/assistant", color: "text-blue-400" },
+                                    { name: "Clinical Case", icon: <HistoryIcon size={28} />, href: "/summary", color: "text-purple-400" },
+                                    { name: "Patient Registry", icon: <Users size={28} />, href: "/profiles", color: "text-emerald-400" }
+                                ].map((node, i) => (
+                                    <Link key={i} href={node.href} className="p-10 rounded-[48px] bg-white/[0.03] border border-white/5 flex flex-col items-center justify-center gap-6 hover:bg-white/[0.06] hover:border-white/10 transition-all group duration-700 shadow-3xl">
+                                        <div className={`${node.color} group-hover:scale-125 group-hover:-rotate-12 transition-all duration-700 filter drop-shadow-lg`}>
+                                            {node.icon}
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-700 group-hover:text-white transition-colors text-center">{node.name}</span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                {/* Institutional Integrity Footer */}
+                <div className="mt-24 relative z-10 px-6">
+                    <div className="flex flex-col xl:flex-row items-center justify-between p-16 bg-white/[0.03] border border-white/5 rounded-[80px] backdrop-blur-3xl gap-16 group hover:bg-white/[0.05] transition-all duration-1000 shadow-5xl">
+                        <div className="flex flex-col md:flex-row items-center md:items-start gap-12 max-w-6xl text-center md:text-left">
+                            <div className="w-24 h-24 bg-white/5 rounded-[40px] border border-white/10 flex items-center justify-center text-primary shrink-0 transition-all duration-1000 group-hover:rotate-12 group-hover:scale-110 shadow-4xl">
+                                <Shield size={44} />
+                            </div>
+                            <div className="space-y-6">
+                                 <h4 className="text-[13px] font-black text-white uppercase tracking-[0.5em] flex items-center justify-center md:justify-start gap-5">
+                                    <Sparkles size={20} className="text-primary animate-pulse" /> Clinical Integrity Protocol
+                                 </h4>
+                                 <p className="text-[16px] font-bold text-slate-500 italic leading-relaxed opacity-80">
+                                    <span className="text-white opacity-100 uppercase font-black text-[12px] tracking-[0.3em] mr-3 underline decoration-primary decoration-4 underline-offset-8">Critical Directive:</span> 
+                                    This console operates as an autonomous pharmacological reasoning node synchronized with global NLM + OpenFDA repositories. Institutional integrity mandates professional physician oversight for all therapeutic decisions. Molecular interaction signals and risk indices are derived from computational probability matrices using decentralized clinical audit trails.
+                                 </p>
+                            </div>
                         </div>
-                    </section>
+                        <div className="flex items-center gap-16 shrink-0 border-l border-white/10 pl-20 hidden xl:flex">
+                            <div className="text-center">
+                                <p className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] mb-3">Protocol Status</p>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_15px_#10b981] animate-pulse"></div>
+                                    <p className="text-3xl font-black text-emerald-500 italic uppercase tracking-tighter">Secure</p>
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[12px] font-black text-slate-700 uppercase tracking-[0.4em] mb-3">Audit Index</p>
+                                <p className="text-3xl font-black text-white italic uppercase tracking-tighter pl-2">Verified</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            {/* Sticky Legal Footer */}
-            <div className="mt-16 p-8 bg-white/[0.02] border border-white/5 rounded-3xl flex items-start gap-4 italic text-slate-500 text-[11px] font-medium leading-relaxed">
-                <Info size={16} className="text-primary shrink-0 mt-1" />
-                <p>MEDI-SAFE AI PROTOCOL: This platform provides clinical-grade information for educational and reference purposes only. It is NOT intended as medical diagnostic software or a substitute for professional pharmaceutical advice. Interaction reports are based on public clinical data aggregations. All medical decisions must be reviewed by a licensed healthcare provider.</p>
-            </div>
-            
-            <style jsx global>{`
-                .text-gradient {
-                    background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                }
-            `}</style>
-        </div>
-    );
-}
-
-// Icon helper components as needed...
-
-// Icon helper
-function BookmarkIcon({ size, className }: any) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
-        >
-            <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-        </svg>
-    );
-}
-
-function FileTextIcon({ size, className }: any) {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={className}
-        >
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <line x1="10" y1="9" x2="8" y2="9" />
-        </svg>
+        </PremiumDashboardLayout>
     );
 }

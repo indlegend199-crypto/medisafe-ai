@@ -120,9 +120,35 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-premium:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-bright);
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  box-shadow: 0 40px 80px -12px rgba(0, 0, 0, 0.7), 0 0 20px rgba(37, 99, 235, 0.1);
+}
+
+.dashboard-shell {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 450px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(37, 99, 235, 0.1) 50%, transparent 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s infinite ease-in-out;
+}
+
+@keyframes glow-pulse {
+  0% { filter: drop-shadow(0 0 5px rgba(37, 99, 235, 0.2)); }
+  50% { filter: drop-shadow(0 0 25px rgba(6, 182, 212, 0.5)); }
+  100% { filter: drop-shadow(0 0 5px rgba(37, 99, 235, 0.2)); }
+}
+
+.mesh-bg-enhanced {
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.2) 0, transparent 40%),
+    radial-gradient(at 100% 0%, rgba(37, 99, 235, 0.15) 0, transparent 40%),
+    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.5) 0, transparent 100%);
 }
 
 .btn-primary {

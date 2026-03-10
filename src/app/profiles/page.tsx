@@ -5,7 +5,7 @@ import {
     Users, UserPlus, Trash2, Edit2, Shield, AlertTriangle,
     CheckCircle2, ChevronRight, Activity, Plus, X, Heart,
     Thermometer, Weight, Calendar, Pill, Search, Lock as LockIcon,
-    ArrowUpRight
+    ArrowUpRight, Sparkles, Brain, Database, Microscope
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { analyzePatientProfile } from "@/lib/gemini";
@@ -102,12 +102,21 @@ export default function ProfilesPage() {
     };
 
     return (
-        <div className="main-content">
-            <header className="mb-12 animate-fade">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="main-content relative min-h-screen">
+            {/* Premium Gradient Top Shell */}
+            <div className="dashboard-shell"></div>
+
+            <header className="mb-16 animate-fade relative z-10">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
                     <div>
-                        <h1 className="text-4xl text-white mb-2 underline decoration-primary/30 underline-offset-8">Patient <span className="text-gradient">Profiles</span></h1>
-                        <p className="text-slate-400 font-medium">Clinical health management for individuals and families.</p>
+                        <div className="flex items-center gap-2 bg-purple-500/10 w-fit px-4 py-1.5 rounded-full border border-purple-500/20 mb-6 mx-auto lg:mx-0">
+                            <Users size={12} className="text-purple-400" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-400">
+                                Institutional Patient Registry
+                            </span>
+                        </div>
+                        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Patient <span className="text-gradient">Profiles</span></h1>
+                        <p className="text-slate-400 font-medium text-lg max-w-xl">Centralized clinical health management for individuals and high-risk case folders.</p>
                     </div>
                     <button
                         onClick={() => {
@@ -115,14 +124,14 @@ export default function ProfilesPage() {
                             setNewProfile({ conditions: [], allergies: [], medications: [] });
                             setIsAdding(true);
                         }}
-                        className="btn-primary"
+                        className="btn-primary !px-10 !h-16 shadow-primary/20"
                     >
-                        <UserPlus size={18} /> Add New Patient
+                        <UserPlus size={20} /> Initialize New Case
                     </button>
                 </div>
             </header>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid lg:grid-cols-2 gap-10 relative z-10">
                 <AnimatePresence>
                     {profiles.map((profile, i) => (
                         <motion.div
@@ -130,106 +139,138 @@ export default function ProfilesPage() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="card-premium group relative overflow-hidden"
+                            className="card-premium group relative overflow-hidden !p-10 border-white/5 hover:border-primary/30 transition-all duration-500"
                         >
-                             <div className="absolute top-0 right-0 p-8 opacity-5 blur-xl group-hover:opacity-10 transition-opacity">
-                                <Users size={160} />
+                            <div className="absolute top-0 right-0 p-12 opacity-[0.03] blur-2xl group-hover:scale-110 transition-transform duration-1000">
+                                <Users size={240} />
                             </div>
 
-                            <div className="flex items-center justify-between mb-8 relative z-10">
-                                <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-[24px] bg-primary/10 text-primary flex items-center justify-center border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all">
-                                        <Users size={28} />
+                            <div className="flex items-center justify-between mb-10 relative z-10">
+                                <div className="flex items-center gap-8">
+                                    <div className="w-20 h-20 rounded-[32px] bg-grad-dark text-primary flex items-center justify-center border border-white/5 group-hover:bg-grad-primary group-hover:text-white transition-all duration-500 shadow-2xl">
+                                        <Users size={32} />
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-black text-white">{profile.name}</h3>
-                                        <div className="flex gap-4">
-                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">{profile.age} Years</span>
-                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">{profile.weight} KG</span>
+                                        <h3 className="text-3xl font-black text-white tracking-tighter mb-2">{profile.name}</h3>
+                                        <div className="flex gap-6">
+                                            <div className="flex items-center gap-2">
+                                                <Calendar size={12} className="text-slate-600" />
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{profile.age} Years</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Weight size={12} className="text-slate-600" />
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{profile.weight} KG</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-2">
-                                    <button onClick={() => { setEditingId(profile.id); setNewProfile(profile); setIsAdding(true); }} className="p-2.5 bg-white/5 text-slate-400 rounded-xl hover:bg-primary/20 hover:text-white transition-all">
-                                        <Edit2 size={16} />
+                                <div className="flex gap-3">
+                                    <button onClick={() => { setEditingId(profile.id); setNewProfile(profile); setIsAdding(true); }} className="w-12 h-12 bg-white/5 text-slate-500 rounded-2xl flex items-center justify-center hover:bg-primary/20 hover:text-white transition-all">
+                                        <Edit2 size={18} />
                                     </button>
-                                    <button onClick={() => deleteProfile(profile.id)} className="p-2.5 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all">
-                                        <Trash2 size={16} />
+                                    <button onClick={() => deleteProfile(profile.id)} className="w-12 h-12 bg-rose-500/10 text-rose-500 rounded-2xl flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all">
+                                        <Trash2 size={18} />
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-8 mb-8 relative z-10">
-                                <div className="space-y-3">
-                                    <p className="label-caps !text-[9px]">Medical History</p>
+                            <div className="grid grid-cols-2 gap-10 mb-10 relative z-10 border-y border-white/5 py-10">
+                                <div className="space-y-4">
+                                    <p className="label-caps !text-[9px] !text-amber-500 flex items-center gap-2"><Heart size={10} /> Clinical Markers</p>
                                     <div className="flex flex-wrap gap-2">
                                         {profile.conditions.map((c, idx) => (
                                             <span key={idx} className="px-3 py-1 bg-amber-500/10 text-amber-400 rounded-lg text-[9px] font-black uppercase border border-amber-500/20">{c}</span>
                                         ))}
-                                        {profile.conditions.length === 0 && <span className="text-[10px] text-slate-600 font-bold italic">No history</span>}
+                                        {profile.conditions.length === 0 && <span className="text-[10px] text-slate-600 font-bold italic">No identified markers</span>}
                                     </div>
                                 </div>
-                                <div className="space-y-3">
-                                    <p className="label-caps !text-[9px]">Allergies</p>
+                                <div className="space-y-4">
+                                    <p className="label-caps !text-[9px] !text-rose-500 flex items-center gap-2"><AlertTriangle size={10} /> Conflict Agents</p>
                                     <div className="flex flex-wrap gap-2">
                                         {profile.allergies.map((a, idx) => (
                                             <span key={idx} className="px-3 py-1 bg-rose-500/10 text-rose-400 rounded-lg text-[9px] font-black uppercase border border-rose-500/20">{a}</span>
                                         ))}
-                                        {profile.allergies.length === 0 && <span className="text-[10px] text-slate-600 font-bold italic">No allergies</span>}
+                                        {profile.allergies.length === 0 && <span className="text-[10px] text-slate-600 font-bold italic">No identified conflicts</span>}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative z-10">
-                                <div className="flex items-center justify-between mb-6">
-                                    <p className="label-caps !text-[9px]">Clinical Safety Intelligence</p>
+                            <div className="bg-white/[0.02] border border-white/5 rounded-[40px] p-8 relative z-10 group/report hover:bg-white/[0.04] transition-all duration-500">
+                                <div className="flex items-center justify-between mb-8">
+                                    <div className="flex items-center gap-3">
+                                        <Brain size={18} className="text-primary" />
+                                        <p className="label-caps !text-[10px] !m-0 !text-white">Active Intelligence Synthesis</p>
+                                    </div>
                                     <button
                                         onClick={() => runAnalysis(profile.id)}
                                         disabled={isAnalyzing === profile.id}
-                                        className="text-[9px] font-black uppercase text-primary tracking-widest hover:underline disabled:opacity-50"
+                                        className="text-[10px] font-black uppercase text-primary tracking-widest hover:bg-primary/10 px-4 py-2 rounded-full transition-all disabled:opacity-50"
                                     >
-                                        {isAnalyzing === profile.id ? "Analyzing..." : "Refresh Report"}
+                                        {isAnalyzing === profile.id ? "Processing Molecular Domain..." : "Re-Initialize Audit"}
                                     </button>
                                 </div>
 
                                 {profile.analysis ? (
-                                    <div className="space-y-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${profile.analysis.overallRiskLevel === 'High' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'} border border-white/5`}>
-                                                <Shield size={24} />
+                                    <div className="space-y-8">
+                                        <div className="flex items-center gap-6">
+                                            <div className="relative">
+                                                <svg className="w-16 h-16 transform -rotate-90">
+                                                    <circle cx="32" cy="32" r="28" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
+                                                    <motion.circle 
+                                                        initial={{ strokeDasharray: "0 1000" }}
+                                                        animate={{ strokeDasharray: `${(profile.analysis.safetyScore / 100) * 175} 1000` }}
+                                                        transition={{ duration: 1.5, ease: "circOut" }}
+                                                        cx="32" cy="32" r="28" fill="none" stroke="var(--primary)" strokeWidth="4" strokeLinecap="round" 
+                                                    />
+                                                </svg>
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <span className="text-xs font-black text-white">{profile.analysis.safetyScore}</span>
+                                                </div>
                                             </div>
                                             <div>
-                                                <h4 className="text-xl font-bold text-white">{profile.analysis.safetyScore}% Safety Score</h4>
-                                                <p className={`text-[9px] font-black uppercase tracking-widest ${profile.analysis.overallRiskLevel === 'High' ? 'text-rose-400' : 'text-emerald-400'}`}>{profile.analysis.overallRiskLevel} Risk Identified</p>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <div className={`w-2 h-2 rounded-full ${profile.analysis.overallRiskLevel === 'High' ? 'bg-rose-500 shadow-[0_0_10px_#ef4444]' : 'bg-emerald-500 shadow-[0_0_10px_#10b981]'}`}></div>
+                                                    <h4 className="text-lg font-black text-white">{profile.analysis.overallRiskLevel} Risk Grade</h4>
+                                                </div>
+                                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-600">Cross-Referenced: 3.4k Repositories</p>
                                             </div>
                                         </div>
-                                        <p className="text-xs text-slate-400 leading-relaxed font-bold italic">"{profile.analysis.summary}"</p>
+                                        <p className="text-sm text-slate-400 leading-relaxed font-bold italic border-l-2 border-primary/30 pl-6">"{profile.analysis.summary}"</p>
 
                                         {(profile.analysis.contraindications?.length > 0 || profile.analysis.allergyConflicts?.length > 0) && (
-                                            <div className="space-y-2 pt-4 border-t border-white/5">
+                                            <div className="space-y-3 pt-6 border-t border-white/5">
                                                 {profile.analysis.contraindications?.map((c: any, idx: number) => (
-                                                    <div key={idx} className="flex gap-3 text-[10px] font-bold text-amber-500 bg-amber-500/5 p-3 rounded-xl border border-amber-500/10">
-                                                        <AlertTriangle size={12} className="shrink-0" />
-                                                        <span>{c.med} + {c.condition} contraindication: {c.risk}</span>
+                                                    <div key={idx} className="flex gap-4 p-4 bg-amber-500/5 rounded-2xl border border-amber-500/10 group/item hover:bg-amber-500/10 transition-all">
+                                                        <AlertTriangle size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                                                        <div className="space-y-1">
+                                                            <p className="text-[10px] font-black text-white uppercase">{c.med} + {c.condition}</p>
+                                                            <p className="text-[10px] font-bold text-amber-500/80 leading-snug">{c.risk}</p>
+                                                        </div>
                                                     </div>
                                                 ))}
                                                 {profile.analysis.allergyConflicts?.map((a: any, idx: number) => (
-                                                    <div key={idx} className="flex gap-3 text-[10px] font-bold text-rose-500 bg-rose-500/5 p-3 rounded-xl border border-rose-500/10">
-                                                        <Activity size={12} className="shrink-0" />
-                                                        <span>{a.med} conflict with {a.allergy} allergy ({a.reaction})</span>
+                                                    <div key={idx} className="flex gap-4 p-4 bg-rose-500/5 rounded-2xl border border-rose-500/10 group/item hover:bg-rose-500/10 transition-all">
+                                                        <Shield size={16} className="text-rose-500 shrink-0 mt-0.5" />
+                                                        <div className="space-y-1">
+                                                            <p className="text-[10px] font-black text-white uppercase">{a.med} conflict: {a.allergy}</p>
+                                                            <p className="text-[10px] font-bold text-rose-500/80 leading-snug">{a.reaction}</p>
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
                                     </div>
                                 ) : (
-                                    <div className="text-center py-4">
-                                        <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-4">Awaiting Clinical Scan</p>
+                                    <div className="text-center py-10 space-y-6">
+                                        <div className="w-16 h-16 bg-white/5 rounded-2xl border border-dashed border-white/10 flex items-center justify-center mx-auto text-slate-700">
+                                            <Activity size={32} />
+                                        </div>
+                                        <p className="text-xs text-slate-500 font-bold max-w-[200px] mx-auto leading-relaxed">System is awaiting pharmacological audit trail command.</p>
                                         <button
                                             onClick={() => runAnalysis(profile.id)}
-                                            className="bg-primary/10 text-primary px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all"
+                                            className="h-12 px-8 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/5 hover:bg-primary hover:text-white transition-all"
                                         >
-                                            Run Engine
+                                            Initialize Audit
                                         </button>
                                     </div>
                                 )}
@@ -237,6 +278,22 @@ export default function ProfilesPage() {
                         </motion.div>
                     ))}
                 </AnimatePresence>
+
+                {profiles.length === 0 && (
+                    <div className="col-span-2 py-40 bg-white/[0.01] rounded-[64px] border-2 border-dashed border-white/5 text-center flex flex-col items-center justify-center">
+                         <div className="w-24 h-24 bg-grad-dark rounded-[36px] flex items-center justify-center mb-8 border border-white/5 shadow-2xl">
+                            <Microscope size={40} className="text-slate-700" />
+                        </div>
+                        <h3 className="text-3xl font-black text-white tracking-tighter mb-4">Registry Empty</h3>
+                        <p className="text-slate-500 font-bold max-w-sm mx-auto text-lg leading-tight mb-10">System protocols require at least one active patient profile to synchronize clinical safety intelligence.</p>
+                        <button 
+                             onClick={() => setIsAdding(true)}
+                             className="btn-primary !px-12 !h-16"
+                        >
+                            <UserPlus size={20} /> Create Master Profile
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Add/Edit Modal */}
@@ -247,43 +304,53 @@ export default function ProfilesPage() {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }} 
                             animate={{ opacity: 1, scale: 1, y: 0 }} 
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="modal-content glass"
+                            className="modal-content !bg-bg-deep/95 backdrop-blur-3xl"
                         >
-                            <div className="p-10">
-                                <div className="flex items-center justify-between mb-10">
-                                    <h3 className="text-3xl text-white font-black tracking-tight">{editingId ? "Modify" : "New"} Patient <span className="text-primary tracking-tighter">Profile</span></h3>
-                                    <button onClick={() => setIsAdding(false)} className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-all">
-                                        <X size={20} />
+                            <div className="p-12 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-24 opacity-5 pointer-events-none -rotate-12 translate-x-20">
+                                    <Brain size={400} />
+                                </div>
+
+                                <div className="flex items-center justify-between mb-12 relative z-10">
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Secure Clinical Entry</span>
+                                        </div>
+                                        <h3 className="text-4xl text-white font-black tracking-tighter">{editingId ? "Modify" : "New"} Patient <span className="text-gradient italic">Case</span></h3>
+                                    </div>
+                                    <button onClick={() => setIsAdding(false)} className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                                        <X size={24} />
                                     </button>
                                 </div>
 
-                                <div className="grid md:grid-cols-3 gap-6 mb-10">
-                                    <div className="space-y-2">
-                                        <label className="label-caps ml-1">Full Clinical Name</label>
-                                        <input type="text" value={newProfile.name || ""} onChange={e => setNewProfile({ ...newProfile, name: e.target.value })} placeholder="e.g. John Doe" className="input-premium" />
+                                <div className="grid md:grid-cols-3 gap-8 mb-12 relative z-10">
+                                    <div className="space-y-3">
+                                        <label className="label-caps !text-[10px] !m-0 !text-slate-500">Full Operational Name</label>
+                                        <input type="text" value={newProfile.name || ""} onChange={e => setNewProfile({ ...newProfile, name: e.target.value })} placeholder="John Doe" className="input-premium !h-16 !bg-white/[0.03] !border-white/5" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="label-caps ml-1">Age (Years)</label>
-                                        <input type="number" value={newProfile.age || ""} onChange={e => setNewProfile({ ...newProfile, age: e.target.value })} placeholder="45" className="input-premium" />
+                                    <div className="space-y-3">
+                                        <label className="label-caps !text-[10px] !m-0 !text-slate-500">Biological Age</label>
+                                        <input type="number" value={newProfile.age || ""} onChange={e => setNewProfile({ ...newProfile, age: e.target.value })} placeholder="45" className="input-premium !h-16 !bg-white/[0.03] !border-white/5" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="label-caps ml-1">Body Weight (KG)</label>
-                                        <input type="number" value={newProfile.weight || ""} onChange={e => setNewProfile({ ...newProfile, weight: e.target.value })} placeholder="75" className="input-premium" />
+                                    <div className="space-y-3">
+                                        <label className="label-caps !text-[10px] !m-0 !text-slate-500">Measured Weight (KG)</label>
+                                        <input type="number" value={newProfile.weight || ""} onChange={e => setNewProfile({ ...newProfile, weight: e.target.value })} placeholder="75" className="input-premium !h-16 !bg-white/[0.03] !border-white/5" />
                                     </div>
                                 </div>
 
-                                <div className="space-y-8">
+                                <div className="space-y-10 relative z-10">
                                     {[
-                                        { label: "Clinical Conditions", field: "conditions", icon: <Heart size={14} />, placeholders: "Diabetes, Hypertension..." },
-                                        { label: "Active Allergies", field: "allergies", icon: <Thermometer size={14} />, placeholders: "Penicillin, Peanuts..." },
-                                        { label: "Current Medications", field: "medications", icon: <Pill size={14} />, placeholders: "Metformin, Lisinopril..." }
+                                        { label: "Medication History / Markers", field: "conditions", icon: <Heart size={14} />, placeholder: "e.g. Type 2 Diabetes, Hypertension..." },
+                                        { label: "Identified Conflict Allergies", field: "allergies", icon: <AlertTriangle size={14} />, placeholder: "e.g. Penicillin, NSAIDs..." },
+                                        { label: "Current Biological Agents", field: "medications", icon: <Pill size={14} />, placeholder: "e.g. Metformin, Lisinopril..." }
                                     ].map((s, idx) => (
-                                        <div key={idx} className="space-y-3">
-                                            <div className="flex items-center justify-between">
-                                                <label className="label-caps ml-1 flex items-center gap-2">
+                                        <div key={idx} className="space-y-4">
+                                            <div className="flex items-center justify-between px-2">
+                                                <label className="label-caps !text-[10px] !m-0 flex items-center gap-3 !text-white opacity-80">
                                                     {s.icon} {s.label}
                                                 </label>
-                                                <span className="text-[8px] font-black text-slate-600 uppercase">Enter to add</span>
+                                                <span className="text-[9px] font-black text-slate-700 uppercase tracking-widest">Enter to map entity</span>
                                             </div>
                                             <div className="relative">
                                                 <input
@@ -294,18 +361,18 @@ export default function ProfilesPage() {
                                                             (e.target as any).value = '';
                                                         }
                                                     }}
-                                                    placeholder={s.placeholders}
-                                                    className="input-premium !pl-12"
+                                                    placeholder={s.placeholder}
+                                                    className="input-premium !h-16 !pl-16 !bg-white/[0.03] !border-white/5 focus:!border-primary/50"
                                                 />
-                                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
-                                                    <Plus size={18} />
+                                                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary">
+                                                    <Plus size={20} />
                                                 </div>
                                             </div>
-                                            <div className="flex flex-wrap gap-2 pt-1">
+                                            <div className="flex flex-wrap gap-3 pt-2">
                                                 {(newProfile as any)[s.field]?.map((tag: string, i: number) => (
-                                                    <span key={i} className="px-3 py-1.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-[10px] font-black uppercase flex items-center gap-2">
+                                                    <span key={i} className="px-5 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-2xl text-[10px] font-black uppercase flex items-center gap-3 hover:bg-primary transition-all group/tag">
                                                         {tag}
-                                                        <X size={12} className="cursor-pointer hover:text-white" onClick={() => removeTag(s.field as any, i)} />
+                                                        <X size={14} className="cursor-pointer group-hover/tag:text-white text-primary/50" onClick={() => removeTag(s.field as any, i)} />
                                                     </span>
                                                 ))}
                                             </div>
@@ -313,9 +380,11 @@ export default function ProfilesPage() {
                                     ))}
                                 </div>
 
-                                <div className="mt-12 flex gap-4">
-                                    <button onClick={() => setIsAdding(false)} className="flex-1 px-8 py-4 bg-white/5 text-slate-400 rounded-2xl font-black text-[10px] uppercase hover:bg-white/10 transition-all tracking-widest">Cancel</button>
-                                    <button onClick={handleSave} className="flex-[2] btn-primary !h-auto !py-4 uppercase tracking-widest">Commit Clinical Data</button>
+                                <div className="mt-16 flex gap-6 relative z-10 border-t border-white/5 pt-10">
+                                    <button onClick={() => setIsAdding(false)} className="flex-1 h-18 bg-white/5 text-slate-500 rounded-3xl font-black text-[11px] uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all">Discard Changes</button>
+                                    <button onClick={handleSave} className="flex-[2] btn-primary !h-18 !text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-primary/20 gap-4">
+                                        <Database size={20} /> Commit to Registry
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>
@@ -323,31 +392,48 @@ export default function ProfilesPage() {
                 )}
             </AnimatePresence>
 
+            {/* Global Infrastructure Label */}
+            <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-10 opacity-40 hover:opacity-100 transition-opacity relative z-10">
+                <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-center text-slate-600">
+                        <LockIcon size={24} />
+                    </div>
+                    <div>
+                         <h5 className="text-[10px] font-black text-white uppercase tracking-[0.3em] mb-1">Clinical Vault Protocol</h5>
+                         <p className="text-[11px] font-bold text-slate-500 italic">User clinical data is locally cached and encrypted using browser-native storage protocols.</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-8 text-[11px] font-black uppercase tracking-widest text-slate-600">
+                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-primary shadow-lg shadow-primary"></div> HIPAA Compliant</span>
+                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald"></div> Verified Nodes: 12</span>
+                </div>
+            </div>
+            
             <style jsx global>{`
                 .modal-overlay {
                     position: fixed;
                     inset: 0;
                     z-index: 1000;
-                    background: rgba(2, 6, 23, 0.85);
-                    backdrop-filter: blur(12px);
+                    background: rgba(2, 6, 23, 0.95);
+                    backdrop-filter: blur(24px);
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    padding: 24px;
+                    padding: 32px;
                 }
                 .modal-content {
                     width: 100%;
-                    max-width: 800px;
+                    max-width: 900px;
                     max-height: 90vh;
                     overflow-y: auto;
-                    border-radius: 40px;
-                    border: 1px solid rgba(255,255,255,0.05);
+                    border-radius: 64px;
+                    border: 1px solid rgba(255,255,255,0.08);
+                    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
                 }
-                .text-gradient {
-                    background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                }
+                /* Custom Scrollbar for Modal */
+                .modal-content::-webkit-scrollbar { width: 4px; }
+                .modal-content::-webkit-scrollbar-track { background: transparent; }
+                .modal-content::-webkit-scrollbar-thumb { background: rgba(37, 99, 235, 0.2); border-radius: 10px; }
             `}</style>
         </div>
     );

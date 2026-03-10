@@ -74,8 +74,11 @@ export default function CheckerPage() {
   };
 
   return (
-    <div className="main-content">
-      <header className="mb-12 animate-fade">
+    <div className="main-content relative min-h-screen">
+      {/* Premium Gradient Top Shell */}
+      <div className="dashboard-shell"></div>
+
+      <header className="mb-12 animate-fade relative z-10">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex items-center gap-2 bg-primary/10 px-4 py-1.5 rounded-full border border-primary/20">
             <Shield size={12} className="text-primary" />
@@ -88,7 +91,7 @@ export default function CheckerPage() {
         <p className="text-slate-400 font-medium text-lg max-w-2xl">High-precision pharmaceutical reasoning for multiple medication safety profiles.</p>
       </header>
 
-      <div className="grid lg:grid-cols-[400px_1fr] gap-10 items-start">
+      <div className="grid lg:grid-cols-[400px_1fr] gap-10 items-start relative z-10">
         {/* Sidebar / Inputs */}
         <aside className="sticky top-10 space-y-8">
           <div className="card-premium !bg-white/[0.02] border-white/5 !p-8">

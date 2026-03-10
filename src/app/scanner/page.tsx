@@ -99,8 +99,11 @@ export default function ScannerPage() {
     };
 
     return (
-        <div className="main-content">
-            <header className="mb-16 animate-fade">
+        <div className="main-content relative min-h-screen">
+            {/* Premium Gradient Top Shell */}
+            <div className="dashboard-shell"></div>
+
+            <header className="mb-16 animate-fade relative z-10">
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
                     <div>
                         <div className="flex items-center gap-2 bg-emerald-500/10 w-fit px-4 py-1.5 rounded-full border border-emerald-500/20 mb-6">
@@ -134,7 +137,8 @@ export default function ScannerPage() {
                 </div>
             </header>
 
-            <AnimatePresence mode="wait">
+            <div className="relative z-10">
+                <AnimatePresence mode="wait">
                 {step === 1 && (
                     <motion.div
                         key="step1"
@@ -434,6 +438,7 @@ export default function ScannerPage() {
                     </motion.div>
                 )}
             </AnimatePresence>
+            </div>
         </div>
     );
 }
