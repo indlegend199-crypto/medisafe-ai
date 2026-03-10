@@ -4,174 +4,108 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Shield, Brain, Pill, History, AlertCircle, Users,
-  FileText, Activity, LayoutDashboard, Settings, Menu, X
+  FileText, Activity, LayoutDashboard, Settings, Menu, X, LogOut
 } from "lucide-react";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
 
   const menuItems = [
-    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
-    { name: "Patient Profiles", href: "/profiles", icon: <Users size={20} /> },
-    { name: "AI Assistant", href: "/assistant", icon: <Brain size={20} /> },
-    { name: "Medication Vault", href: "/vault", icon: <Pill size={20} /> },
-    { name: "Interaction Checker", href: "/checker", icon: <Shield size={20} /> },
-    { name: "Prescription Scanner", href: "/scanner", icon: <Activity size={20} /> },
+    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={18} /> },
+    { name: "Patient Profiles", href: "/profiles", icon: <Users size={18} /> },
+    { name: "AI Assistant", href: "/assistant", icon: <Brain size={18} /> },
+    { name: "Medication Vault", href: "/vault", icon: <Pill size={18} /> },
+    { name: "Interaction Checker", href: "/checker", icon: <Shield size={18} /> },
+    { name: "Prescription Scanner", href: "/scanner", icon: <Activity size={18} /> },
   ];
 
   if (pathname === "/") return null;
 
   return (
     <>
-      <button className="sidebar-toggle" onClick={() => setIsOpen(!isOpen)}>
+      <button 
+        className="lg:hidden fixed top-6 left-6 z-[200] p-3 bg-slate-900 border border-white/10 rounded-2xl text-white shadow-2xl"
+        onClick={() => setIsOpen(!isOpen)}
+      >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      <aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
-        <div className="sidebar-header">
-          <Link href="/" className="logo">
-            <Shield className="logo-icon" size={28} />
-            <span className="logo-text">MediSafe <span className="logo-accent">AI</span></span>
-          </Link>
-        </div>
-
-        <nav className="sidebar-nav">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`nav-item ${pathname === item.href ? "active" : ""}`}
-            >
-              {item.icon}
-              <span className="nav-text">{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">AD</div>
-            <div className="user-details">
-              <span className="user-name">Alex Doe</span>
-              <span className="user-role">Patient Profile</span>
+      <AnimatePresence mode="wait">
+        {isOpen && (
+          <motion.aside 
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            transition={{ type: "spring", damping: 20, stiffness: 100 }}
+            className={`sidebar-premium fixed lg:sticky left-0 top-0 h-screen z-[150] shadow-2xl flex flex-col`}
+          >
+            <div className="px-8 mb-12">
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="w-10 h-10 bg-grad-primary rounded-xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
+                  <Shield size={22} fill="currentColor" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xl font-black tracking-tighter text-white">MediSafe <span className="text-primary italic">AI</span></span>
+                  <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">Patient Safety</span>
+                </div>
+              </Link>
             </div>
-          </div>
-          <p className="disclaimer-mini">Educational use only. Not medical advice.</p>
-        </div>
-      </aside>
 
-      <style jsx>{`
-        .sidebar {
-          width: 280px;
-          height: 100vh;
-          background: white;
-          border-right: 1px solid var(--border);
-          display: flex;
-          flex-direction: column;
-          position: fixed;
-          left: 0;
-          top: 0;
-          z-index: 100;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar.closed {
-          transform: translateX(-100%);
-        }
-        
-        .sidebar-header {
-          padding: 32px 24px;
-        }
-        .logo {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-        .logo-icon { color: var(--primary); }
-        .logo-text { font-size: 20px; font-weight: 800; color: var(--text-main); }
-        .logo-accent { color: var(--primary); }
+            <nav className="flex-1 px-4 space-y-1">
+              {menuItems.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`sidebar-item group ${isActive ? "active" : ""}`}
+                  >
+                    <div className="icon-container group-hover:bg-primary/20 transition-all">
+                      {item.icon}
+                    </div>
+                    <span>{item.name}</span>
+                    {isActive && (
+                       <motion.div 
+                        layoutId="active-pill"
+                        className="absolute left-0 w-1 h-8 bg-primary rounded-r-full shadow-[0_0_15px_#2563eb]"
+                       />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
 
-        .sidebar-nav {
-          flex: 1;
-          padding: 0 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-        .nav-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          border-radius: 12px;
-          color: var(--text-muted);
-          font-weight: 500;
-          font-size: 15px;
-          transition: all 0.2s;
-        }
-        .nav-item:hover {
-          background: #f1f5f9;
-          color: var(--primary);
-        }
-        .nav-item.active {
-          background: var(--primary-light);
-          color: var(--primary);
-        }
+            <div className="px-6 py-8 mt-auto border-t border-white/5 space-y-6">
+              <div className="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/5 group hover:border-white/10 transition-all">
+                <div className="avatar-med !w-10 !h-10 !text-xs !rounded-xl">AD</div>
+                <div className="flex flex-col">
+                  <span className="text-xs font-black text-white">Alex Doe</span>
+                  <span className="text-[10px] font-bold text-slate-500">Family Admin</span>
+                </div>
+                <button className="ml-auto text-slate-600 hover:text-white transition-colors">
+                  <LogOut size={16} />
+                </button>
+              </div>
 
-        .sidebar-footer {
-          padding: 24px;
-          border-top: 1px solid var(--border);
-          background: #f8fafc;
-        }
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 16px;
-        }
-        .user-avatar {
-          width: 36px;
-          height: 36px;
-          background: var(--primary);
-          color: white;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          font-size: 12px;
-        }
-        .user-details {
-          display: flex;
-          flex-direction: column;
-        }
-        .user-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
-        .user-role { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+              <div className="p-5 bg-gradient-to-br from-primary/10 to-transparent rounded-3xl border border-primary/10">
+                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <AlertCircle size={12} /> Legal Policy
+                </p>
+                <p className="text-[9px] font-bold text-slate-500 leading-relaxed italic">
+                  Clinical assistant only. Not a medical substitute.
+                </p>
+              </div>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
-        .sidebar-toggle {
-          position: fixed;
-          top: 16px;
-          left: 16px;
-          z-index: 1000;
-          background: white;
-          border: 1px solid var(--border);
-          padding: 8px;
-          border-radius: 8px;
-          display: none;
-        }
-
-        .disclaimer-mini {
-          font-size: 10px;
-          color: var(--text-muted);
-          line-height: 1.4;
-          opacity: 0.8;
-        }
-
-        @media (max-width: 992px) {
-          .sidebar-toggle { display: block; }
-          .sidebar.closed { transform: translateX(-100%); }
-          .sidebar.open { transform: translateX(0); box-shadow: 20px 0 50px rgba(0,0,0,0.1); }
+      <style jsx global>{`
+        .bg-grad-primary {
+          background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
         }
       `}</style>
     </>

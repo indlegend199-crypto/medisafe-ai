@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import NavBar from "@/components/layout/NavBar";
-import Footer from "@/components/layout/Footer";
-import { History, Shield, Brain, Calendar, ArrowRight, Trash2, Filter, ChevronRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { History as HistoryIcon, Shield, Brain, Calendar, ArrowRight, Trash2, Filter, ChevronRight, Zap, Lock as LockIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HistoryItem {
     id: string;
@@ -26,120 +24,123 @@ export default function HistoryPage() {
     const filtered = MOCK_HISTORY.filter(h => filter === "all" || h.type === filter);
 
     return (
-        <div className="history-page">
-            <NavBar />
-
-            <main className="container main-content">
-                <header className="page-header">
-                    <div className="header-badge">
-                        <History size={16} /> Activity Log
-                    </div>
-                    <h1>Safety Check History</h1>
-                    <p className="subtitle">Review your past interaction checks and scanned prescriptions.</p>
-                </header>
-
-                <section className="history-controls">
-                    <div className="filter-tabs">
-                        <button className={filter === "all" ? "active" : ""} onClick={() => setFilter("all")}>All Records</button>
-                        <button className={filter === "interaction" ? "active" : ""} onClick={() => setFilter("interaction")}>Interaction Checks</button>
-                        <button className={filter === "scan" ? "active" : ""} onClick={() => setFilter("scan")}>AI Scans</button>
-                    </div>
-                    <button className="clear-btn"><Trash2 size={16} /> Clear All</button>
-                </section>
-
-                <div className="history-list">
-                    {filtered.map((item, idx) => (
-                        <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: idx * 0.05 }}
-                            className="history-card"
-                        >
-                            <div className="h-type-icon">
-                                {item.type === "interaction" ? <Shield className={item.result.toLowerCase()} /> : <Brain className="scan-icon" />}
-                            </div>
-
-                            <div className="h-info">
-                                <div className="h-top">
-                                    <span className="h-date"><Calendar size={14} /> {item.date}</span>
-                                    <span className={`h-badge ${item.result.toLowerCase()}`}>
-                                        {item.type === "interaction" ? `${item.result} Risk` : "Scan Completed"}
-                                    </span>
-                                </div>
-                                <h4 className="h-title">{item.items.join(" + ")}</h4>
-                            </div>
-
-                            <div className="h-actions">
-                                <button className="view-btn">
-                                    View Results <ChevronRight size={18} />
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-
-                    {filtered.length === 0 && (
-                        <div className="empty-history card">
-                            <History size={48} strokeWidth={1} color="var(--border)" />
-                            <h3>No history found</h3>
-                            <p>Your safety checks and scans will appear here.</p>
+        <div className="main-content">
+            <header className="mb-12 animate-fade">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+                    <div>
+                        <div className="flex items-center gap-2 bg-primary/10 w-fit px-4 py-1.5 rounded-full border border-primary/20 mb-6">
+                            <HistoryIcon size={12} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                                Temporal Activity Log
+                            </span>
                         </div>
-                    )}
+                        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Clinical <span className="text-gradient">Timeline</span></h1>
+                        <p className="text-slate-400 font-medium text-lg max-w-2xl">Archived molecular screenings and pharmaceutical scan interactions.</p>
+                    </div>
+
+                    <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/5 backdrop-blur-xl">
+                        {[
+                            { id: "all", label: "All Activity" },
+                            { id: "interaction", label: "Interactions" },
+                            { id: "scan", label: "AI Scans" }
+                        ].map((btn) => (
+                            <button
+                                key={btn.id}
+                                onClick={() => setFilter(btn.id as any)}
+                                className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${
+                                    filter === btn.id 
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                                    : 'text-slate-500 hover:text-white'
+                                }`}
+                            >
+                                {btn.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-            </main>
+            </header>
 
-            <Footer />
+            <section className="space-y-4">
+                <AnimatePresence mode="popLayout">
+                    {filtered.length === 0 ? (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            className="card-premium !bg-white/[0.01] !py-32 text-center"
+                        >
+                            <HistoryIcon size={64} className="text-white/10 mx-auto mb-6" />
+                            <h3 className="text-2xl font-black text-white mb-2">Temporal Void</h3>
+                            <p className="text-slate-500 font-medium">No activity records found for the selected clinical filters.</p>
+                        </motion.div>
+                    ) : (
+                        filtered.map((item, idx) => (
+                            <motion.div
+                                key={item.id}
+                                layout
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="group card-premium !p-6 flex items-center gap-8 hover:bg-white/5 transition-all border-white/5 hover:border-white/10"
+                            >
+                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
+                                    item.type === "interaction" ? 
+                                    (item.result === "Red" ? "bg-red-500/10 text-red-400 border-red-500/20" :
+                                     item.result === "Yellow" ? "bg-amber-500/10 text-amber-400 border-amber-500/20" :
+                                     "bg-emerald-500/10 text-emerald-400 border-emerald-500/20") :
+                                    "bg-primary/10 text-primary border-primary/20"
+                                }`}>
+                                    {item.type === "interaction" ? <Shield size={28} /> : <Brain size={28} />}
+                                </div>
 
-            <style jsx>{`
-        .history-page { background: var(--background); min-height: 100vh; }
-        .main-content { padding-top: 60px; padding-bottom: 100px; }
-        
-        .history-controls { 
-          display: flex; justify-content: space-between; align-items: center; 
-          margin-bottom: 32px; flex-wrap: wrap; gap: 20px;
-        }
-        .filter-tabs { display: flex; background: white; padding: 4px; border-radius: 999px; border: 1px solid var(--border); }
-        .filter-tabs button { 
-          padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--text-muted); 
-          transition: all 0.2s ease;
-        }
-        .filter-tabs button.active { background: var(--primary); color: white; }
-        .clear-btn { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--danger); font-weight: 600; }
+                                <div className="flex-1 space-y-2">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2 text-slate-500">
+                                            <Calendar size={14} />
+                                            <span className="text-[10px] font-black uppercase tracking-widest">{item.date}</span>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                                            item.result === "Red" ? "bg-red-500/5 text-red-500 border-red-500/10" :
+                                            item.result === "Yellow" ? "bg-amber-500/5 text-amber-500 border-amber-500/10" :
+                                            item.result === "Green" ? "bg-emerald-500/5 text-emerald-500 border-emerald-500/10" :
+                                            "bg-primary/5 text-primary border-primary/10"
+                                        }`}>
+                                            {item.type === "interaction" ? `${item.result} RISK` : "SCAN SUCCESS"}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-xl font-black text-white tracking-tight group-hover:text-primary transition-colors">
+                                        {item.items.join(" + ")}
+                                    </h4>
+                                </div>
 
-        .history-list { display: flex; flex-direction: column; gap: 16px; }
-        .history-card { 
-          background: white; padding: 20px 24px; border-radius: var(--radius-md); 
-          border: 1px solid var(--border); display: flex; align-items: center; gap: 24px;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .history-card:hover { transform: translateX(8px); box-shadow: var(--shadow-sm); border-color: var(--primary); }
+                                <div className="hidden md:flex items-center gap-3">
+                                    <button className="h-12 px-6 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
+                                        Detailed Report <ChevronRight size={14} />
+                                    </button>
+                                    <button className="w-12 h-12 flex items-center justify-center text-slate-600 hover:text-red-400 transition-colors bg-white/5 rounded-xl border border-white/5">
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))
+                    )}
+                </AnimatePresence>
+            </section>
 
-        .h-type-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--background); display: flex; align-items: center; justify-content: center; }
-        .h-type-icon .red { color: var(--danger); }
-        .h-type-icon .yellow { color: var(--warning); }
-        .h-type-icon .green { color: var(--success); }
-        .h-type-icon .scan-icon { color: #9333ea; }
-
-        .h-info { flex: 1; }
-        .h-top { display: flex; items-center: center; gap: 16px; margin-bottom: 6px; }
-        .h-date { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-        .h-badge { font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 4px; padding: 2px 6px; }
-        .h-badge.red { background: #fee2e2; color: #991b1b; }
-        .h-badge.yellow { background: #fef9c3; color: #854d0e; }
-        .h-badge.green { background: #dcfce7; color: #166534; }
-        .h-badge.extracted { background: #faf5ff; color: #6b21a8; }
-
-        .h-title { font-size: 18px; color: var(--text-main); }
-        
-        .view-btn { display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--primary); font-size: 14px; }
-
-        .empty-history { height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px; }
-
-        @media (max-width: 768px) {
-          .history-card { flex-direction: column; align-items: flex-start; gap: 16px; }
-          .h-actions { align-self: flex-end; }
-        }
-      `}</style>
+            {/* Protocol Footer */}
+            <div className="mt-16 p-12 bg-white/[0.01] rounded-[48px] border border-white/5 flex flex-col md:flex-row gap-8 items-center opacity-40 hover:opacity-100 transition-opacity">
+                <div className="w-14 h-14 bg-grad-dark rounded-2xl flex items-center justify-center text-primary shrink-0 border border-white/5">
+                    <LockIcon size={24} />
+                </div>
+                <div className="flex-1">
+                    <h5 className="label-caps !text-[11px] !text-white/80 mb-2">Temporal Security Protocol</h5>
+                    <p className="text-xs font-bold text-slate-500 italic leading-relaxed">
+                        Archived clinical actions are encrypted and stored locally. Temporal logs provide a deterministic trail of pharmacological safety checks to ensure long-term medication vigilance.
+                    </p>
+                </div>
+                <button className="h-14 px-10 bg-red-500/5 border border-red-500/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-red-400 hover:bg-red-500 hover:text-white transition-all">
+                    Purge History
+                </button>
+            </div>
         </div>
     );
 }

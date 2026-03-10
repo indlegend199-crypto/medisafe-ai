@@ -81,6 +81,8 @@ export async function analyzeInteractions(medicines: string[], isStudentMode: bo
     {
       "overallRiskLevel": "Low" | "Moderate" | "High",
       "summary": "Clinical overview of risk.",
+      "confidenceScore": 98,
+      "warningSigns": ["symptom 1", "symptom 2", "..."],
       "interactions": [
         {
           "meds": ["Med A", "Med B"],

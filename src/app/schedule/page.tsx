@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import NavBar from "@/components/layout/NavBar";
-import Footer from "@/components/layout/Footer";
-import { Clock, CheckCircle2, Circle, AlertCircle, Calendar, ChevronRight, Trophy, Flame } from "lucide-react";
-import { motion } from "framer-motion";
+import { Clock, CheckCircle2, Circle, AlertCircle, Calendar, ChevronRight, Trophy, Flame, Zap, Shield, Info as InfoIcon, Lock as LockIcon } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ScheduleItem {
     id: string;
@@ -17,15 +15,11 @@ interface ScheduleItem {
 export default function SchedulePage() {
     const [todaySchedule, setTodaySchedule] = useState<ScheduleItem[]>([]);
     const [streak, setStreak] = useState(5);
-    const [vaultMeds, setVaultMeds] = useState<any[]>([]);
 
     useEffect(() => {
         const savedVault = localStorage.getItem("medisafe_vault");
         if (savedVault) {
             const parsed = JSON.parse(savedVault);
-            setVaultMeds(parsed);
-
-            // Auto-generate schedule based on vault
             const schedule: ScheduleItem[] = [];
             parsed.forEach((m: any) => {
                 const times = m.frequency === "Twice Daily" ? ["08:00 AM", "08:00 PM"] : ["09:00 AM"];
@@ -53,153 +47,149 @@ export default function SchedulePage() {
     const progress = todaySchedule.length > 0 ? (takenCount / todaySchedule.length) * 100 : 0;
 
     return (
-        <div className="schedule-page">
-            <NavBar />
-
-            <main className="container main-content">
-                <header className="page-header">
-                    <div className="header-badge">
-                        <Clock size={16} /> Daily Medication Schedule
-                    </div>
-                    <div className="header-flex">
-                        <div>
-                            <h1>Today's Adherence</h1>
-                            <p className="subtitle">Track your daily doses and maintain your healthy streak.</p>
+        <div className="main-content">
+            <header className="mb-12 animate-fade">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                    <div>
+                        <div className="flex items-center gap-2 bg-primary/10 w-fit px-4 py-1.5 rounded-full border border-primary/20 mb-6">
+                            <Clock size={12} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                                Daily Adherence Protocol
+                            </span>
                         </div>
-                        <div className="streak-badge">
-                            <Flame size={20} color="#ff4500" />
-                            <span>{streak} Day Streak</span>
-                        </div>
+                        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Adherence <span className="text-gradient">Matrix</span></h1>
+                        <p className="text-slate-400 font-medium text-lg max-w-xl">Synchronized chronotherapy schedule and real-time ingestion tracking.</p>
                     </div>
-                </header>
 
-                <section className="progress-section card">
-                    <div className="progress-info">
-                        <h3>{Math.round(progress)}% Completed</h3>
-                        <span>{takenCount} of {todaySchedule.length} doses taken</span>
-                    </div>
-                    <div className="progress-bar-bg">
-                        <motion.div
-                            className="progress-bar-fill"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${progress}%` }}
-                            transition={{ duration: 0.8 }}
-                        />
-                    </div>
-                </section>
-
-                <div className="schedule-container">
-                    <div className="time-line">
-                        {todaySchedule.length === 0 ? (
-                            <div className="empty-schedule card">
-                                <AlertCircle size={48} color="var(--border)" />
-                                <p>No medications in your vault. Add medicines to see your schedule.</p>
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-red-500/20 blur-3xl rounded-full opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                        <div className="relative flex items-center gap-5 bg-white/5 px-8 py-5 rounded-[32px] border border-white/5 backdrop-blur-xl">
+                            <div className="w-14 h-14 bg-grad-dark rounded-2xl flex items-center justify-center text-red-500 border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                                <Flame size={32} />
                             </div>
+                            <div>
+                                <span className="text-3xl font-black text-white">{streak}</span>
+                                <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Day Sequence Streak</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section className="card-premium !bg-grad-dark !p-10 mb-12 border-white/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[100px] -mr-32 -mt-32"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-end mb-8 relative z-10">
+                    <div className="space-y-2">
+                        <h3 className="text-3xl font-black text-white">{Math.round(progress)}% Completed</h3>
+                        <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">{takenCount} of {todaySchedule.length} Molecular Units Administered</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Target Threshold</p>
+                        <p className="text-sm font-bold text-white">100% Protocol Completion</p>
+                    </div>
+                </div>
+
+                <div className="h-4 bg-white/5 rounded-full overflow-hidden border border-white/5 relative z-10">
+                    <motion.div
+                        className="h-full bg-grad-primary shadow-[0_0_20px_rgba(59,130,246,0.3)]"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                    />
+                </div>
+            </section>
+
+            <div className="grid lg:grid-cols-[1fr_320px] gap-12">
+                <main className="space-y-4">
+                    <AnimatePresence mode="popLayout">
+                        {todaySchedule.length === 0 ? (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="card-premium !bg-white/[0.01] !py-32 text-center flex flex-col items-center gap-6">
+                                <AlertCircle size={64} className="text-white/10" />
+                                <div className="space-y-2">
+                                    <h4 className="text-2xl font-black text-white">Empty Manifest</h4>
+                                    <p className="text-slate-500 font-medium">No medications identified in current vault. Populate to generate schedule.</p>
+                                </div>
+                            </motion.div>
                         ) : (
-                            todaySchedule.sort((a, b) => a.time.localeCompare(b.time)).map((item) => (
+                            todaySchedule.sort((a, b) => a.time.localeCompare(b.time)).map((item, idx) => (
                                 <motion.div
                                     key={item.id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className={`schedule-card card ${item.taken ? 'taken' : ''}`}
+                                    className={`group card-premium !p-8 flex items-center gap-8 cursor-pointer transition-all duration-300 ${
+                                        item.taken ? 'opacity-40 grayscale border-emerald-500/20' : 'hover:bg-white/5 border-white/5'
+                                    }`}
                                     onClick={() => toggleTaken(item.id)}
                                 >
-                                    <div className="s-time">{item.time}</div>
-                                    <div className="s-info">
-                                        <h4>{item.medName}</h4>
-                                        <span>{item.dosage}</span>
+                                    <div className={`w-20 font-black text-lg tracking-tighter ${item.taken ? 'text-slate-500' : 'text-primary'}`}>
+                                        {item.time}
                                     </div>
-                                    <div className="s-status">
+                                    <div className="flex-1 space-y-1">
+                                        <h4 className={`text-xl font-black tracking-tight transition-all ${item.taken ? 'text-slate-500 line-through' : 'text-white'}`}>
+                                            {item.medName}
+                                        </h4>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{item.dosage}</p>
+                                    </div>
+                                    <div className="shrink-0">
                                         {item.taken ? (
-                                            <CheckCircle2 size={28} color="var(--success)" fill="#dcfce7" />
+                                            <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                                                <CheckCircle2 size={28} />
+                                            </div>
                                         ) : (
-                                            <Circle size={28} color="#e2e8f0" />
+                                            <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-700 border border-white/10 group-hover:border-primary/50 group-hover:text-primary transition-all">
+                                                <Circle size={28} />
+                                            </div>
                                         )}
                                     </div>
                                 </motion.div>
                             ))
                         )}
+                    </AnimatePresence>
+                </main>
+
+                <aside className="space-y-8">
+                    <div className="card-premium !bg-grad-primary !p-8 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-6 opacity-20 rotate-12 group-hover:rotate-6 transition-transform">
+                            <Trophy size={100} className="text-white" />
+                        </div>
+                        <div className="relative z-10 text-white space-y-4">
+                            <h4 className="text-xl font-black tracking-tight">Health Apex</h4>
+                            <p className="text-sm font-bold text-white/80 leading-relaxed italic">
+                                "95% adherence benchmark achieved this cycle. Optimal molecular stabilization in progress."
+                            </p>
+                        </div>
                     </div>
 
-                    <aside className="schedule-sidebar">
-                        <div className="card achievement-card">
-                            <Trophy size={32} color="#fbbf24" />
-                            <h4>Health Milestone</h4>
-                            <p>You've taken 95% of your doses this week. Keep it up!</p>
+                    <div className="card-premium !bg-white/[0.02] border-white/5 !p-8 space-y-6">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-primary border border-white/5">
+                                <Zap size={20} />
+                            </div>
+                            <h4 className="text-[12px] font-black text-white uppercase tracking-widest">Protocol Alerts</h4>
                         </div>
+                        <p className="text-xs text-slate-500 font-medium leading-relaxed italic">
+                            Dose reminders are broadcasted 15 minutes prior to molecular intake schedule.
+                        </p>
+                        <button className="w-full h-12 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:bg-white/10 transition-all border border-white/5">
+                            Configuration
+                        </button>
+                    </div>
 
-                        <div className="card reminder-settings">
-                            <h4>Notifications</h4>
-                            <p className="small-text">Dose reminders are sent to your device 15 minutes before scheduled time.</p>
-                            <button className="btn-secondary small-btn">Adjust Timings</button>
-                        </div>
-                    </aside>
-                </div>
-            </main>
-
-            <Footer />
-
-            <style jsx>{`
-        .schedule-page { background: var(--background); min-height: 100vh; }
-        .main-content { padding-top: 60px; padding-bottom: 100px; }
-        .page-header { margin-bottom: 32px; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .header-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: #eff6ff;
-          color: #2563eb;
-          padding: 6px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 600;
-          margin-bottom: 16px;
-        }
-        .streak-badge { 
-          display: flex; align-items: center; gap: 8px; 
-          background: #fff; border: 1px solid #fee2e2; 
-          padding: 10px 16px; border-radius: 999px;
-          font-weight: 700; color: #ff4500;
-          box-shadow: var(--shadow-sm);
-        }
-
-        .progress-section { margin-bottom: 40px; }
-        .progress-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
-        .progress-info h3 { font-size: 24px; color: var(--primary); }
-        .progress-info span { color: var(--text-muted); font-size: 14px; font-weight: 600; }
-        .progress-bar-bg { height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 999px; }
-
-        .schedule-container { display: grid; grid-template-columns: 1fr 300px; gap: 40px; }
-        .time-line { display: flex; flex-direction: column; gap: 16px; }
-        
-        .schedule-card { 
-          display: flex; align-items: center; gap: 24px; cursor: pointer;
-          transition: all 0.2s ease; border-left: 4px solid var(--primary);
-        }
-        .schedule-card:hover { border-color: var(--primary-hover); transform: translateX(5px); }
-        .schedule-card.taken { background: #f8fafc; opacity: 0.8; border-color: var(--success); }
-        .schedule-card.taken h4 { text-decoration: line-through; color: var(--text-muted); }
-        
-        .s-time { font-weight: 800; color: var(--primary); font-size: 15px; width: 80px; }
-        .s-info { flex: 1; }
-        .s-info h4 { font-size: 18px; margin-bottom: 2px; }
-        .s-info span { font-size: 14px; color: var(--text-muted); font-weight: 500; }
-
-        .schedule-sidebar { display: flex; flex-direction: column; gap: 24px; }
-        .achievement-card { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .achievement-card p { font-size: 13px; color: var(--text-muted); }
-        
-        .reminder-settings h4 { margin-bottom: 12px; font-size: 16px; }
-        .small-text { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4; }
-        .small-btn { padding: 8px 16px; font-size: 13px; }
-
-        .empty-schedule { text-align: center; padding: 60px; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 16px; }
-
-        @media (max-width: 900px) {
-          .schedule-container { grid-template-columns: 1fr; }
-        }
-      `}</style>
+                    <div className="p-8 bg-grad-dark border border-white/5 rounded-[40px] flex items-start gap-4 opacity-50">
+                        <Info size={18} className="text-primary shrink-0 mt-1" />
+                        <p className="text-[10px] font-bold text-slate-500 leading-relaxed italic">
+                            Schedule generated using localized frequency vectors. Verify chronotherapy timings with clinical documentation.
+                        </p>
+                    </div>
+                </aside>
+            </div>
         </div>
     );
 }
+
+const Info = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+);

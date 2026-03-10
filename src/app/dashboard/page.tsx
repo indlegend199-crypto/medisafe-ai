@@ -4,404 +4,299 @@ import { useState, useEffect } from "react";
 import {
     Shield, Activity, Calendar, AlertCircle, Pill,
     ChevronRight, Brain, Clock, Plus, ArrowUpRight,
-    User, CheckCircle, Info, X, Camera, Search, HelpCircle, Users
+    User, CheckCircle, Info, X, Camera, Search, HelpCircle, Users,
+    ChevronDown, AlertTriangle, TrendingUp, Filter, MoreHorizontal,
+    History as HistoryIcon
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 export default function DashboardPage() {
-    const [safetyScore, setSafetyScore] = useState(85);
+    const [safetyScore, setSafetyScore] = useState(92);
     const [vaultMeds, setVaultMeds] = useState<any[]>([]);
-    const [showOnboarding, setShowOnboarding] = useState(false);
-    const [onboardingStep, setOnboardingStep] = useState(0);
 
     useEffect(() => {
         const saved = localStorage.getItem("medisafe_vault");
         if (saved) setVaultMeds(JSON.parse(saved));
-
-        const tourDone = localStorage.getItem("medisafe_tour_complete");
-        if (!tourDone) {
-            setTimeout(() => setShowOnboarding(true), 1500);
-        }
     }, []);
 
-    const completeTour = () => {
-        localStorage.setItem("medisafe_tour_complete", "true");
-        setShowOnboarding(false);
-    };
+    const alerts = [
+        { type: "Critical", meds: "Warfarin + Ibuprofen", patient: "John Doe", color: "rose" },
+        { type: "Major", meds: "Metformin + Furosemide", patient: "Jane Doe", color: "amber" },
+        { type: "Moderate", meds: "Lisinopril + Spironolactone", patient: "Recent Scan", color: "primary" }
+    ];
 
-    const onboardingSteps = [
-        {
-            title: "Welcome to MediSafe AI",
-            desc: "Your intelligent assistant for medication safety. Let's take a quick look at how to protect your health.",
-            icon: <Shield size={40} className="text-blue-600" />
-        },
-        {
-            title: "Patient Profiles",
-            desc: "Manage clinical data for everyone in your family. Automatically detect contraindications based on medical history.",
-            icon: <Users size={40} className="text-blue-600" />,
-            link: "/profiles"
-        },
-        {
-            title: "AI Health Assistant",
-            desc: "Ask complex pharmacological questions and get instant, structured clinical guidance for any medication.",
-            icon: <HelpCircle size={40} className="text-blue-600" />,
-            link: "/assistant"
-        },
-        {
-            title: "Interaction Checker",
-            desc: "The core of MediSafe. Enter 2-10 medicines to analyze complex physiological interactions and clinical risks.",
-            icon: <Search size={40} className="text-blue-600" />,
-            link: "/checker"
-        },
-        {
-            title: "Prescription Scanner",
-            desc: "No more manual typing. Use your camera to scan Rx images and extract medicine names and treatment logic instantly.",
-            icon: <Camera size={40} className="text-blue-600" />,
-            link: "/scanner"
-        }
+    const schedule = [
+        { time: "08:00 AM", med: "Atorvastatin", dosage: "20mg", status: "Taken" },
+        { time: "12:30 PM", med: "Metformin", dosage: "500mg", status: "Due" },
+        { time: "06:00 PM", med: "Lisinopril", dosage: "10mg", status: "Upcoming" }
     ];
 
     return (
-        <div className="dashboard-page">
-            <main className="container main-content">
-                <header className="dashboard-header animate-fade-in">
-                    <div className="user-welcome">
-                        <div className="avatar-med">AD</div>
-                        <div>
-                            <h1>Welcome back, Alex</h1>
-                            <p className="subtitle">Your medication safety profile is looking secure today.</p>
+        <div className="main-content">
+            {/* Hero Section */}
+            <header className="mb-12 animate-fade">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl text-white mb-2">Welcome, <span className="text-gradient">Alex Doe</span></h1>
+                        <p className="text-slate-400 font-medium">Your Medication Safety Overview • {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</p>
+                    </div>
+                    <div className="flex gap-4">
+                        <Link href="/checker" className="btn-primary">
+                            <Plus size={18} /> New Analysis
+                        </Link>
+                    </div>
+                </div>
+            </header>
+
+            <div className="dashboard-grid">
+                {/* Safety Score - Circular Gauge */}
+                <div className="col-span-4 h-full">
+                    <section className="card-premium h-full flex flex-col items-center justify-center text-center">
+                        <span className="label-caps mb-8">Medication Safety Score</span>
+                        
+                        <div className="relative w-64 h-64 mb-8">
+                            <svg className="w-full h-full transform -rotate-90">
+                                <circle
+                                    cx="128" cy="128" r="110"
+                                    fill="none"
+                                    stroke="rgba(255,255,255,0.05)"
+                                    strokeWidth="12"
+                                />
+                                <motion.circle
+                                    initial={{ strokeDasharray: "0 1000" }}
+                                    animate={{ strokeDasharray: `${(safetyScore / 100) * 690} 1000` }}
+                                    transition={{ duration: 2, ease: "easeOut" }}
+                                    cx="128" cy="128" r="110"
+                                    fill="none"
+                                    stroke="url(#svg-grad-primary)"
+                                    strokeWidth="12"
+                                    strokeLinecap="round"
+                                />
+                                <defs>
+                                    <linearGradient id="svg-grad-primary" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stopColor="#2563eb" />
+                                        <stop offset="100%" stopColor="#06b6d4" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                <motion.span 
+                                    initial={{ opacity: 0, scale: 0.5 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="text-6xl font-black text-white"
+                                >
+                                    {safetyScore}
+                                </motion.span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-emerald/10 px-3 py-1 rounded-full border border-emerald/20">Excellent</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="header-disclaimer-top">
-                        <Shield size={14} /> Educational medication safety portal
-                    </div>
-                </header>
 
-                <div className="dashboard-grid">
-                    {/* Left Column: Safety Index & Alerts */}
-                    <div className="col-left">
-                        <section className="card score-card animate-fade-in">
-                            <div className="card-header">
-                                <h3>Medication Safety Index</h3>
-                                <Link href="/summary" className="view-link">Clinical Report <ArrowUpRight size={14} /></Link>
+                        <div className="grid grid-cols-2 gap-4 w-full pt-8 border-t border-white/5">
+                            <div className="text-left">
+                                <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Meds Monitored</p>
+                                <p className="text-lg font-bold text-white">{vaultMeds.length} Items</p>
                             </div>
+                            <div className="text-right">
+                                <p className="text-[10px] font-black uppercase text-slate-500 mb-1">Last Analysis</p>
+                                <p className="text-lg font-bold text-white">2h ago</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
 
-                            <div className="score-viz">
-                                <div className="progress-ring">
-                                    <svg viewBox="0 0 100 100">
-                                        <circle className="bg" cx="50" cy="50" r="45" />
-                                        <circle
-                                            className="fg"
-                                            cx="50"
-                                            cy="50"
-                                            r="45"
-                                            style={{ strokeDasharray: `${(safetyScore / 100) * 283}, 283` }}
-                                        />
-                                    </svg>
-                                    <div className="score-content">
-                                        <span className="number">{safetyScore}</span>
-                                        <span className="label">Safe</span>
-                                    </div>
-                                </div>
-                                <div className="score-details">
-                                    <p>Your index reflects <strong>0 critical interactions</strong> across {vaultMeds.length} active medications.</p>
-                                    <div className="status-badge secure">System Protected</div>
-                                </div>
+                {/* Interaction Alerts Panel */}
+                <div className="col-span-8 h-full">
+                    <section className="card-premium h-full overflow-hidden">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h3 className="text-xl text-white">Clinical Interaction Alerts</h3>
+                                <p className="text-xs text-slate-500 font-bold">Priority alerts from monitored patient profiles</p>
                             </div>
-                        </section>
+                            <button className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+                                <Filter size={18} className="text-slate-400" />
+                            </button>
+                        </div>
 
-                        <section className="card alerts-card animate-fade-in">
-                            <div className="card-header">
-                                <h3>Smart Safety Alerts</h3>
-                                <span className="alert-count">2 New</span>
-                            </div>
-                            <div className="alert-list">
-                                <div className="alert-item warning">
-                                    <AlertCircle size={20} />
-                                    <div className="alert-text">
-                                        <strong>Dietary Interaction Note</strong>
-                                        <p>Recent data suggests avoiding grapefruit with Atorvastatin.</p>
+                        <div className="space-y-4">
+                            {alerts.map((alert, idx) => (
+                                <motion.div 
+                                    key={idx}
+                                    initial={{ opacity: 0, x: 20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className={`flex items-center gap-6 p-6 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-white/[0.04] transition-all group border-l-4 border-l-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}
+                                >
+                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}/10 text-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}>
+                                        <AlertTriangle size={24} />
                                     </div>
-                                </div>
-                                <div className="alert-item info">
-                                    <Info size={20} />
-                                    <div className="alert-text">
-                                        <strong>System Update</strong>
-                                        <p>New clinical reasoning data added for diabetic therapies.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <Link href="/alerts" className="btn-full-secondary">View All Alert History</Link>
-                        </section>
-                    </div>
-
-                    {/* Middle Column: Schedule & Vault */}
-                    <div className="col-mid">
-                        <section className="card schedule-card animate-fade-in">
-                            <div className="card-header">
-                                <h3>Today's Schedule</h3>
-                                <Clock size={18} className="text-slate-400" />
-                            </div>
-                            <div className="schedule-list">
-                                <div className="sched-item">
-                                    <div className="time">08:00 AM</div>
-                                    <div className="med-box">
-                                        <strong>Metformin</strong>
-                                        <span>500mg • With Breakfast</span>
-                                    </div>
-                                    <div className="check-btn-dash"><CheckCircle size={18} /></div>
-                                </div>
-                                <div className="sched-item">
-                                    <div className="time">09:00 PM</div>
-                                    <div className="med-box">
-                                        <strong>Atorvastatin</strong>
-                                        <span>20mg • Before Sleep</span>
-                                    </div>
-                                    <div className="check-btn-dash inactive"></div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="card vault-summary-card animate-fade-in">
-                            <div className="card-header">
-                                <h3>Medication Vault</h3>
-                                <Link href="/vault" className="view-link">Manage Vault <ChevronRight size={14} /></Link>
-                            </div>
-                            <div className="vault-preview">
-                                {vaultMeds.length === 0 ? (
-                                    <p className="empty-txt">No active medications saved to vault.</p>
-                                ) : (
-                                    vaultMeds.slice(0, 3).map((med, i) => (
-                                        <div key={i} className="v-preview-item">
-                                            <Pill size={16} />
-                                            <span>{med.name}</span>
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded bg-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}/10 text-${alert.color === 'primary' ? 'blue-500' : alert.color + '-500'}`}>{alert.type}</span>
+                                            <span className="text-xs font-bold text-slate-500">• {alert.patient}</span>
                                         </div>
-                                    ))
-                                )}
-                                {vaultMeds.length > 3 && <div className="more-count">+{vaultMeds.length - 3} more</div>}
-                            </div>
-                            <Link href="/vault" className="add-quick-btn"><Plus size={16} /> Add Medicine</Link>
-                        </section>
-                    </div>
-
-                    {/* Right Column: Quick Tools & History */}
-                    <div className="col-right">
-                        <section className="card tools-card animate-fade-in">
-                            <h3>Quick Health Engines</h3>
-                            <div className="tools-grid">
-                                <Link href="/profiles" className="tool-card-dash">
-                                    <Users size={24} />
-                                    <span>Profiles</span>
-                                </Link>
-                                <Link href="/assistant" className="tool-card-dash">
-                                    <HelpCircle size={24} />
-                                    <span>AI Assist</span>
-                                </Link>
-                                <Link href="/checker" className="tool-card-dash">
-                                    <Shield size={24} />
-                                    <span>Checker</span>
-                                </Link>
-                                <Link href="/scanner" className="tool-card-dash">
-                                    <Camera size={24} />
-                                    <span>Scan Rx</span>
-                                </Link>
-                            </div>
-                        </section>
-
-                        <section className="card recent-activity animate-fade-in">
-                            <h3>Recent System Activity</h3>
-                            <div className="activity-timeline">
-                                <div className="activity-item">
-                                    <div className="act-icon"><Search size={14} /></div>
-                                    <div className="act-txt">
-                                        <p>Interaction check: <strong>Lisinopril + Metformin</strong></p>
-                                        <span>Yesterday at 4:32 PM</span>
+                                        <p className="text-md font-bold text-white leading-tight">{alert.meds}</p>
                                     </div>
-                                </div>
-                                <div className="activity-item">
-                                    <div className="act-icon"><Camera size={14} /></div>
-                                    <div className="act-txt">
-                                        <p>Prescription scanned successfully</p>
-                                        <span>2 days ago</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
+                                    <button className="opacity-0 group-hover:opacity-100 p-2 bg-white/5 rounded-xl text-slate-400 hover:text-white transition-all">
+                                        <ChevronRight size={18} />
+                                    </button>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </section>
                 </div>
 
-                <div className="dashboard-disclaimer">
-                    <Info size={16} />
-                    <p>“This platform provides educational medication safety information and does not replace professional medical advice. Always consult a licensed doctor or pharmacist before making medical decisions.”</p>
-                </div>
-            </main>
+                {/* Medication Schedule Card */}
+                <div className="col-span-8">
+                    <section className="card-premium">
+                        <div className="flex items-center justify-between mb-10">
+                            <h3 className="text-xl text-white flex items-center gap-3">
+                                <Clock className="text-primary" size={22} /> Today's Schedule
+                            </h3>
+                            <button className="text-xs font-black uppercase tracking-widest text-primary hover:underline">View Calendar</button>
+                        </div>
 
-            {/* Onboarding Overlay */}
-            <AnimatePresence>
-                {showOnboarding && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="onboarding-overlay"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            className="onboarding-card card shadow-2xl"
-                        >
-                            <div className="o-header">
-                                <div className="o-icon-box">{onboardingSteps[onboardingStep].icon}</div>
-                                <button className="o-skip" onClick={completeTour}>Skip Tour</button>
+                        <div className="space-y-4">
+                            {schedule.map((item, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-5 rounded-[24px] bg-white/[0.02] border border-white/5 group hover:border-primary/20 transition-all">
+                                    <div className="flex items-center gap-6">
+                                        <div className="text-center w-16 px-3 py-2 bg-white/5 rounded-2xl border border-white/5">
+                                            <p className="text-[10px] font-black text-slate-500 uppercase">Time</p>
+                                            <p className="text-xs font-black text-white">{item.time.split(' ')[0]}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-lg font-black text-white">{item.med}</p>
+                                            <p className="text-xs font-bold text-slate-500">{item.dosage}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase ${item.status === 'Taken' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-primary/10 text-primary'}`}>
+                                            {item.status}
+                                        </span>
+                                        <button className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-400 group-hover:bg-primary group-hover:text-white transition-all">
+                                            <CheckCircle size={20} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </div>
+
+                {/* Quick Actions & Recent Activity */}
+                <div className="col-span-4 space-y-8">
+                    <section className="card-premium">
+                        <h3 className="text-lg text-white mb-6">Quick Actions</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { name: "Scan Rx", icon: <Camera size={20} />, href: "/scanner" },
+                                { name: "Add Med", icon: <Plus size={20} />, href: "/vault" },
+                                { name: "AI Chat", icon: <Brain size={20} />, href: "/assistant" },
+                                { name: "History", icon: <HistoryIcon size={20} />, href: "/summary" }
+                            ].map((action, i) => (
+                                <Link key={i} href={action.href} className="p-6 rounded-3xl bg-white/5 border border-white/5 flex flex-col items-center justify-center gap-3 hover:bg-primary/10 hover:border-primary/30 transition-all group">
+                                    <div className="text-primary group-hover:scale-110 transition-transform">
+                                        {action.icon}
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover:text-white">{action.name}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="card-premium !bg-grad-dark !border-none text-white overflow-hidden relative">
+                         <div className="absolute top-0 right-0 p-8 opacity-10 blur-xl">
+                            <TrendingUp size={200} />
+                        </div>
+                        <div className="relative z-10 flex flex-col h-full justify-between">
+                            <div>
+                                <h3 className="text-xl mb-2">AI Insights</h3>
+                                <p className="text-xs text-slate-400 font-medium leading-relaxed">System has detected 3 potential interaction risks in your family vault. Last scan was optimal.</p>
                             </div>
-                            <div className="o-content">
-                                <h2>{onboardingSteps[onboardingStep].title}</h2>
-                                <p>{onboardingSteps[onboardingStep].desc}</p>
+                            <div className="mt-8">
+                                <Link href="/assistant" className="w-full py-4 bg-white/10 hover:bg-white/20 transition-all rounded-2xl flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest">
+                                    Full Clinical Report <ArrowUpRight size={14} />
+                                </Link>
                             </div>
-                            <div className="o-footer">
-                                <div className="o-dots">
-                                    {onboardingSteps.map((_, i) => (
-                                        <div key={i} className={`o-dot ${i === onboardingStep ? "active" : ""}`}></div>
+                        </div>
+                    </section>
+                </div>
+
+                {/* Recent Patients Table */}
+                <div className="col-span-12">
+                    <section className="card-premium">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-xl text-white">Monitored Patient Profiles</h3>
+                            <button className="text-slate-400 hover:text-white"><MoreHorizontal size={20} /></button>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-white/5 text-[10px] font-black uppercase text-slate-500 tracking-widest">
+                                        <th className="pb-4">Patient Name</th>
+                                        <th className="pb-4">Age / BMI</th>
+                                        <th className="pb-4">Primary Conditions</th>
+                                        <th className="pb-4">Status</th>
+                                        <th className="pb-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
+                                    {[
+                                        { name: "Emily Chen", stats: "28y • 22.4", condition: "Type 2 Diabetes", status: "Balanced" },
+                                        { name: "John Doe", stats: "45y • 26.8", condition: "Hypertension", status: "Review Required" },
+                                        { name: "Jane Foster", stats: "34y • 21.5", condition: "Asthma", status: "Balanced" }
+                                    ].map((row, i) => (
+                                        <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
+                                            <td className="py-4">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xs font-black text-white border border-white/10">
+                                                        {row.name.charAt(0)}
+                                                    </div>
+                                                    <span className="text-sm font-bold text-white">{row.name}</span>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 text-xs font-bold text-slate-400">{row.stats}</td>
+                                            <td className="py-4">
+                                                <span className="px-3 py-1 bg-white/5 border border-white/5 rounded-full text-[10px] font-black text-slate-300">
+                                                    {row.condition}
+                                                </span>
+                                            </td>
+                                            <td className="py-4">
+                                                <div className="flex items-center gap-2">
+                                                    <div className={`w-2 h-2 rounded-full ${row.status === 'Balanced' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'}`} />
+                                                    <span className="text-xs font-bold text-slate-300">{row.status}</span>
+                                                </div>
+                                            </td>
+                                            <td className="py-4 text-right">
+                                                <button className="text-primary hover:text-white transition-colors"><ArrowUpRight size={18} /></button>
+                                            </td>
+                                        </tr>
                                     ))}
-                                </div>
-                                <div className="o-btns">
-                                    {onboardingStep > 0 && (
-                                        <button className="btn-secondary" onClick={() => setOnboardingStep(s => s - 1)}>Back</button>
-                                    )}
-                                    {onboardingStep < onboardingSteps.length - 1 ? (
-                                        <button className="btn-primary" onClick={() => setOnboardingStep(s => s + 1)}>Next</button>
-                                    ) : (
-                                        <button className="btn-primary" onClick={completeTour}>Start Using MediSafe</button>
-                                    )}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
 
-            <style jsx>{`
-        .dashboard-page { background: #f8fafc; min-height: 100vh; }
-        .main-content { padding-top: 60px; padding-bottom: 100px; }
-        
-        .dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; }
-        .user-welcome { display: flex; align-items: center; gap: 24px; }
-        .avatar-med { width: 64px; height: 64px; background: var(--grad-primary); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); }
-        .user-welcome h1 { font-size: 40px; font-weight: 900; color: var(--text-main); letter-spacing: -1px; margin-bottom: 4px; }
-        .subtitle { color: var(--text-muted); font-size: 16px; font-weight: 500; }
-        .header-disclaimer-top { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(37, 99, 235, 0.1); }
-
-        .dashboard-grid { 
-          display: grid; 
-          grid-template-columns: 1fr 1fr 360px; 
-          gap: 32px; 
-          margin-bottom: 60px;
-        }
-
-        .card { background: white; padding: 32px; border-radius: 32px; height: 100%; border: 1px solid #e2e8f0; display: flex; flex-direction: column; transition: all 0.3s; box-shadow: var(--shadow-sm); }
-        .card:hover { box-shadow: var(--shadow-xl); border-color: rgba(37, 99, 235, 0.1); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        .card-header h3 { font-size: 18px; font-weight: 900; color: #0f172a; tracking-tight: -0.5px; }
-        .view-link { font-size: 12px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-        /* Score Card */
-        .score-card { background: white; }
-        .score-viz { display: flex; align-items: center; gap: 40px; }
-        .progress-ring { position: relative; width: 140px; height: 140px; }
-        .progress-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .progress-ring circle { fill: transparent; stroke-width: 10; stroke-linecap: round; }
-        .progress-ring circle.bg { stroke: #f1f5f9; }
-        .progress-ring circle.fg { stroke: var(--success); transition: stroke-dasharray 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        .score-content { position: absolute; top:0; left:0; width:100%; height:100%; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: rotate(0deg); }
-        .score-content .number { font-size: 40px; font-weight: 900; color: #0f172a; line-height: 1; }
-        .score-content .label { font-size: 12px; font-weight: 900; color: var(--success); text-transform: uppercase; margin-top: 6px; letter-spacing: 0.1em; }
-        .score-details p { font-size: 15px; color: #64748b; margin-bottom: 16px; line-height: 1.6; }
-        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-        .status-badge.secure { background: #dcfce7; color: #166534; }
-
-        /* Alerts Card */
-        .alert-count { font-size: 11px; font-weight: 800; background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 999px; }
-        .alert-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; flex: 1; }
-        .alert-item { display: flex; gap: 16px; padding: 20px; border-radius: 20px; border: 1px solid #f1f5f9; align-items: flex-start; transition: all 0.2s; }
-        .alert-item:hover { transform: scale(1.02); }
-        .alert-item.warning { background: #fffbeb; color: #b45309; border-color: #fef3c7; }
-        .alert-item.info { background: #f0f7ff; color: #1d4ed8; border-color: #dbeafe; }
-        .alert-text strong { display: block; font-size: 14px; margin-bottom: 4px; font-weight: 900; }
-        .alert-text p { font-size: 13px; opacity: 0.8; line-height: 1.5; }
-        .btn-full-secondary { width: 100%; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; text-align: center; font-size: 13px; font-weight: 800; color: #64748b; transition: all 0.2s; }
-        .btn-full-secondary:hover { background: white; border-color: var(--primary); color: var(--primary); }
-
-        /* Schedule Card */
-        .schedule-list { display: flex; flex-direction: column; gap: 16px; flex: 1; }
-        .sched-item { display: flex; align-items: center; gap: 20px; padding: 20px; background: #f8fafc; border-radius: 24px; border: 1px solid #f1f5f9; transition: all 0.2s; }
-        .sched-item:hover { background: white; box-shadow: var(--shadow-md); }
-        .sched-item .time { font-size: 11px; font-weight: 900; color: #94a3b8; width: 64px; text-transform: uppercase; }
-        .med-box { flex: 1; }
-        .med-box strong { display: block; font-size: 15px; color: #0f172a; font-weight: 900; }
-        .med-box span { font-size: 13px; color: #64748b; font-weight: 500; }
-        .check-btn-dash { width: 36px; height: 36px; background: #22c55e; color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px -2px rgba(34, 197, 94, 0.4); }
-        .check-btn-dash.inactive { background: white; border: 2px dashed #e2e8f0; box-shadow: none; }
-
-        /* Vault summary */
-        .vault-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; flex: 1; }
-        .v-preview-item { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 800; color: #475569; border: 1px solid #e2e8f0; }
-        .more-count { font-size: 12px; color: #94a3b8; font-weight: 800; align-self: center; margin-left: 4px; }
-        .add-quick-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; background: var(--grad-primary); color: white; border-radius: 16px; font-size: 14px; font-weight: 800; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); transition: all 0.2s; }
-        .add-quick-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -8px rgba(37, 99, 235, 0.4); }
-
-        /* Tools Card */
-        .tools-card h3 { font-size: 18px; font-weight: 900; margin-bottom: 24px; tracking-tight: -0.5px; }
-        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .tool-card-dash { background: white; border: 1px solid #e2e8f0; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .tool-card-dash:hover { border-color: var(--primary); background: #f0f7ff; transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-        .tool-card-dash span { font-size: 14px; font-weight: 800; color: #1e293b; }
-        .tool-card-dash svg { color: var(--primary); }
-
-        /* Activity timeline */
-        .recent-activity h3 { font-size: 18px; font-weight: 900; margin-bottom: 24px; }
-        .activity-timeline { display: flex; flex-direction: column; gap: 24px; }
-        .activity-item { display: flex; gap: 16px; align-items: center; }
-        .act-icon { width: 36px; height: 36px; background: #f1f5f9; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0; }
-        .act-txt p { font-size: 14px; color: #334155; margin-bottom: 2px; line-height: 1.4; font-weight: 500; }
-        .act-txt strong { color: #0f172a; font-weight: 800; }
-        .act-txt span { font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
-
-        .dashboard-disclaimer { margin-top: 80px; padding: 32px; background: white; border: 1px dashed #e2e8f0; border-radius: 24px; display: flex; gap: 20px; align-items: flex-start; }
-        .dashboard-disclaimer p { font-size: 12px; color: #64748b; line-height: 1.8; font-weight: 500; }
-
-        /* Onboarding Styles */
-        .onboarding-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .onboarding-card { width: 100%; max-width: 520px; padding: 48px; background: white; border-radius: 48px; text-align: center; border: none; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5); }
-        .o-header { display: flex; justify-content: center; align-items: center; margin-bottom: 40px; position: relative; }
-        .o-icon-box { width: 100px; height: 100px; background: var(--primary-light); border-radius: 32px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-        .o-skip { font-size: 12px; font-weight: 900; color: #94a3b8; position: absolute; right: 0; top: 0; text-transform: uppercase; letter-spacing: 0.1em; }
-        .o-content h2 { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 16px; letter-spacing: -1px; }
-        .o-content p { font-size: 17px; color: #64748b; line-height: 1.7; margin-bottom: 48px; font-weight: 500; }
-        .o-footer { display: flex; flex-direction: column; gap: 32px; }
-        .o-dots { display: flex; justify-content: center; gap: 10px; }
-        .o-dot { width: 10px; height: 10px; background: #e2e8f0; border-radius: 50%; transition: all 0.3s; }
-        .o-dot.active { width: 32px; background: var(--primary); border-radius: 6px; }
-        .o-btns { display: flex; gap: 16px; }
-        .o-btns button { flex: 1; padding: 18px; font-weight: 900; border-radius: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-        @media (max-width: 1400px) {
-          .dashboard-grid { grid-template-columns: 1fr 1fr 320px; gap: 24px; }
-        }
-        @media (max-width: 1200px) {
-          .dashboard-grid { grid-template-columns: 1fr 1fr; }
-          .col-right { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        }
-        @media (max-width: 768px) {
-          .dashboard-grid { grid-template-columns: 1fr; }
-          .col-right { grid-template-columns: 1fr; grid-column: auto; }
-          .dashboard-header { flex-direction: column; align-items: flex-start; gap: 24px; }
-          .user-welcome h1 { font-size: 32px; }
-        }
-      `}</style>
+            {/* Sticky Legal Footer */}
+            <div className="mt-16 p-8 bg-white/[0.02] border border-white/5 rounded-3xl flex items-start gap-4 italic text-slate-500 text-[11px] font-medium leading-relaxed">
+                <Info size={16} className="text-primary shrink-0 mt-1" />
+                <p>MEDI-SAFE AI PROTOCOL: This platform provides clinical-grade information for educational and reference purposes only. It is NOT intended as medical diagnostic software or a substitute for professional pharmaceutical advice. Interaction reports are based on public clinical data aggregations. All medical decisions must be reviewed by a licensed healthcare provider.</p>
+            </div>
+            
+            <style jsx global>{`
+                .text-gradient {
+                    background: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+            `}</style>
         </div>
     );
 }
+
+// Icon helper components as needed...
 
 // Icon helper
 function BookmarkIcon({ size, className }: any) {

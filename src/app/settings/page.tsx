@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
     User, Bell, Shield, Eye, Database, HelpCircle,
-    ChevronRight, Save, LogOut, Info, Settings, Trash2, RotateCcw
+    ChevronRight, Save, LogOut, Info, Settings, Trash2, RotateCcw, Lock as LockIcon, Zap, Activity
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -32,258 +32,242 @@ export default function SettingsPage() {
     };
 
     return (
-        <div className="settings-page">
-            <main className="container main-content">
-                <header className="page-header">
-                    <div className="header-badge">
-                        <Settings size={16} /> Application Settings
-                    </div>
-                    <h1>Platform Preferences</h1>
-                    <p className="subtitle">Manage your profile, data privacy, and medication safety monitoring settings.</p>
-                </header>
+        <div className="main-content">
+            <header className="mb-12 animate-fade">
+                <div className="flex items-center gap-2 bg-white/5 w-fit px-4 py-1.5 rounded-full border border-white/5 mb-6">
+                    <Settings size={12} className="text-slate-400" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        System Configuration
+                    </span>
+                </div>
+                <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Platform <span className="text-gradient">Preferences</span></h1>
+                <p className="text-slate-400 font-medium text-lg max-w-2xl">Manage your clinical profile, data encryption, and medical safety monitoring protocols.</p>
+            </header>
 
-                <div className="settings-grid">
-                    <div className="settings-sidebar">
-                        <div className="settings-nav">
-                            <button
-                                className={`settings-nav-item ${activeSection === "account" ? "active" : ""}`}
-                                onClick={() => setActiveSection("account")}
-                            >
-                                <User size={18} /> Account Profile
-                            </button>
-                            <button
-                                className={`settings-nav-item ${activeSection === "privacy" ? "active" : ""}`}
-                                onClick={() => setActiveSection("privacy")}
-                            >
-                                <Shield size={18} /> Privacy & Security
-                            </button>
-                            <button
-                                className={`settings-nav-item ${activeSection === "data" ? "active" : ""}`}
-                                onClick={() => setActiveSection("data")}
-                            >
-                                <Database size={18} /> Data Management
-                            </button>
-                        </div>
-                    </div>
+            <div className="grid lg:grid-cols-[280px_1fr] gap-12 items-start">
+                {/* Navigation Sidebar */}
+                <aside className="sticky top-10 space-y-2">
+                    {[
+                        { id: "account", label: "Account Profile", icon: <User size={18} /> },
+                        { id: "privacy", label: "Privacy & Security", icon: <Shield size={18} /> },
+                        { id: "data", label: "Data Management", icon: <Database size={18} /> }
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveSection(item.id)}
+                            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all ${
+                                activeSection === item.id 
+                                ? 'bg-grad-primary text-white shadow-lg shadow-primary/20' 
+                                : 'text-slate-500 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                            {item.icon}
+                            {item.label}
+                        </button>
+                    ))}
 
-                    <div className="settings-content">
+                    <div className="mt-12 pt-12 border-t border-white/5">
+                        <button className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm uppercase tracking-widest text-slate-500 hover:text-red-400 transition-colors">
+                            <LogOut size={18} />
+                            Terminate Session
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Content Area */}
+                <main className="space-y-8">
+                    <AnimatePresence mode="wait">
                         {activeSection === "account" && (
-                            <section className="settings-section card animate-fade-in">
-                                <h3>Profile Information</h3>
-                                <div className="profile-edit">
-                                    <div className="avatar-large">AD</div>
-                                    <div className="profile-fields">
-                                        <div className="form-group">
-                                            <label>Full Name</label>
-                                            <input type="text" defaultValue="Alex Doe" />
+                            <motion.section
+                                key="account"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="card-premium space-y-10"
+                            >
+                                <div className="flex items-center gap-4 mb-2">
+                                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5">
+                                        <User size={24} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tight">Profile Information</h3>
+                                </div>
+
+                                <div className="flex flex-col md:flex-row gap-10 items-start">
+                                    <div className="relative group">
+                                        <div className="w-32 h-32 bg-grad-dark rounded-[40px] flex items-center justify-center text-4xl font-black text-white border-2 border-white/5 shadow-2xl overflow-hidden">
+                                            AD
+                                            <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <Zap size={24} className="text-white" />
+                                            </div>
                                         </div>
-                                        <div className="form-group">
-                                            <label>Email Address</label>
-                                            <input type="email" defaultValue="alex.doe@example.com" />
+                                        <button className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg border-4 border-bg-deep group-hover:scale-110 transition-transform">
+                                            <RotateCcw size={16} />
+                                        </button>
+                                    </div>
+
+                                    <div className="flex-1 grid md:grid-cols-2 gap-8 w-full">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Full Legal Name</label>
+                                            <input type="text" defaultValue="Alex Doe" className="input-premium" />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Secure Email Address</label>
+                                            <input type="email" defaultValue="alex.doe@medisafe.io" className="input-premium" />
+                                        </div>
+                                        <div className="space-y-3 md:col-span-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-2">Bio-Authentication ID</label>
+                                            <input type="text" value="AUTH_88291_CLINICAL" disabled className="input-premium opacity-50 cursor-not-allowed" />
                                         </div>
                                     </div>
                                 </div>
-                            </section>
+                            </motion.section>
                         )}
 
                         {activeSection === "privacy" && (
-                            <section className="settings-section card animate-fade-in">
-                                <h3>Security & Health Privacy</h3>
-                                <div className="settings-list">
-                                    <div className="setting-item">
-                                        <div className="item-info">
-                                            <strong>Anonymous Research Sharing</strong>
-                                            <p>Allow anonymous sharing of interaction data to help researchers improve drug safety protocols.</p>
-                                        </div>
-                                        <label className="switch">
-                                            <input type="checkbox" checked={sharing} onChange={(e) => setSharing(e.target.checked)} />
-                                            <span className="slider round"></span>
-                                        </label>
+                            <motion.section
+                                key="privacy"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="card-premium space-y-8"
+                            >
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5">
+                                        <Shield size={24} />
                                     </div>
-                                    <div className="setting-item">
-                                        <div className="item-info">
-                                            <strong>Biometric Vault Unlock</strong>
-                                            <p>Use FaceID or Fingerprint to secure your medication vault access.</p>
-                                        </div>
-                                        <label className="switch">
-                                            <input type="checkbox" checked={biometric} onChange={(e) => setBiometric(e.target.checked)} />
-                                            <span className="slider round"></span>
-                                        </label>
-                                    </div>
-                                    <div className="setting-item">
-                                        <div className="item-info">
-                                            <strong>Safety Notifications</strong>
-                                            <p>Receive push alerts for high-risk interaction warnings detected in your vault.</p>
-                                        </div>
-                                        <label className="switch">
-                                            <input type="checkbox" checked={notifications} onChange={(e) => setNotifications(e.target.checked)} />
-                                            <span className="slider round"></span>
-                                        </label>
-                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tight">Health Privacy & Security</h3>
                                 </div>
-                            </section>
+
+                                <div className="space-y-4">
+                                    {[
+                                        { 
+                                            label: "Anonymous Research Sync", 
+                                            desc: "Allow encrypted sharing of interaction data to improve global pharmacological safety protocols.",
+                                            state: sharing,
+                                            setter: setSharing
+                                        },
+                                        { 
+                                            label: "Bio-Unlock Architecture", 
+                                            desc: "Secure the medication vault using device-level biometric authentication (FaceID/Fingerprint).",
+                                            state: biometric,
+                                            setter: setBiometric
+                                        },
+                                        { 
+                                            label: "High-Risk Realtime Alerts", 
+                                            desc: "Initiate emergency push notifications when high-toxicity interactions are identified in the vault.",
+                                            state: notifications,
+                                            setter: setNotifications
+                                        }
+                                    ].map((item, i) => (
+                                        <div key={i} className="group p-8 bg-white/[0.02] border border-white/5 rounded-[32px] hover:border-primary/20 transition-all flex items-center justify-between gap-10">
+                                            <div className="max-w-xl">
+                                                <h4 className="text-lg font-black text-white tracking-tight mb-2">{item.label}</h4>
+                                                <p className="text-sm text-slate-500 font-medium leading-relaxed">{item.desc}</p>
+                                            </div>
+                                            <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={item.state} 
+                                                    onChange={(e) => item.setter(e.target.checked)} 
+                                                    className="sr-only peer" 
+                                                />
+                                                <div className="w-14 h-7 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.section>
                         )}
 
                         {activeSection === "data" && (
-                            <section className="settings-section card animate-fade-in">
-                                <h3>Health Data Management</h3>
-                                <p className="section-desc">You have full control over your health data. All information is stored locally and can be exported or purged.</p>
+                            <motion.section
+                                key="data"
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                className="card-premium space-y-10"
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5">
+                                        <Database size={24} />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-white tracking-tight">Data Integrity Control</h3>
+                                </div>
 
-                                <div className="data-actions-list">
-                                    <div className="data-action-item">
-                                        <div className="d-a-info">
-                                            <strong>Reset Onboarding</strong>
-                                            <p>Clear the "seen" status of the onboarding guide to view the instructions again.</p>
+                                <div className="p-8 bg-primary/5 border border-primary/20 rounded-[32px] flex items-start gap-4">
+                                    <Info size={20} className="text-primary mt-1 shrink-0" />
+                                    <p className="text-sm font-bold text-slate-300 leading-relaxed italic">
+                                        Your health stack is localized. All clinical data fragments are stored using device-level encryption. We do not store raw medication lists on our servers.
+                                    </p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[32px] flex items-center justify-between gap-10">
+                                        <div>
+                                            <h4 className="text-lg font-black text-white tracking-tight mb-2">Reset Interaction Tour</h4>
+                                            <p className="text-sm text-slate-500 font-medium">Re-initialize the clinical onboarding guide on the dashboard.</p>
                                         </div>
-                                        <button className="btn-secondary btn-sm" onClick={resetOnboarding}>
-                                            <RotateCcw size={14} /> Reset Guide
+                                        <button onClick={resetOnboarding} className="h-12 px-6 bg-white/5 rounded-xl text-[10px] font-black uppercase text-slate-400 hover:text-white hover:bg-white/10 transition-all tracking-widest flex items-center gap-3 border border-white/5">
+                                            <RotateCcw size={14} /> Re-Launch Guide
                                         </button>
                                     </div>
 
-                                    <div className="data-action-item danger-zone">
-                                        <div className="d-a-info">
-                                            <strong>Purge All Health Data</strong>
-                                            <p>Permanently delete all medications, histories, and logs from this device.</p>
+                                    <div className="p-8 bg-red-500/5 border border-red-500/10 rounded-[32px] flex items-center justify-between gap-10">
+                                        <div>
+                                            <h4 className="text-lg font-black text-red-400 tracking-tight mb-2">Purge Clinical Repository</h4>
+                                            <p className="text-sm text-slate-500 font-medium">Permanently delete all medications, patient records, and history fragments.</p>
                                         </div>
-                                        <button className="btn-danger-outline btn-sm" onClick={clearAllData}>
-                                            <Trash2 size={14} /> Delete Everything
+                                        <button onClick={clearAllData} className="h-12 px-6 bg-red-500/10 rounded-xl text-[10px] font-black uppercase text-red-500 hover:bg-red-500 hover:text-white transition-all tracking-widest flex items-center gap-3 border border-red-500/20">
+                                            <Trash2 size={14} /> Terminate Data
                                         </button>
                                     </div>
                                 </div>
-                            </section>
+                            </motion.section>
                         )}
+                    </AnimatePresence>
 
-                        <div className="page-actions">
-                            <AnimatePresence>
-                                {showSuccess && (
-                                    <motion.span
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0 }}
-                                        className="save-success"
-                                    >
-                                        Settings saved successfully
-                                    </motion.span>
-                                )}
-                            </AnimatePresence>
-                            <div className="btn-group">
-                                <button className="btn-secondary logout-btn">
-                                    <LogOut size={18} /> Log Out
-                                </button>
-                                <button className="btn-primary" onClick={handleSave}>
-                                    <Save size={18} /> Save Preferences
-                                </button>
-                            </div>
-                        </div>
+                    {/* Footer Actions */}
+                    <div className="flex items-center justify-between pt-10 border-t border-white/5">
+                        <AnimatePresence>
+                            {showSuccess && (
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    className="flex items-center gap-2 text-emerald-400 font-black text-sm"
+                                >
+                                    <CheckCircle2 size={16} />
+                                    CONFIGURATION SYNCHRONIZED
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                        <div className="legal-disclaimer-box card">
-                            <div className="d-header">
-                                <Info size={18} color="var(--primary)" />
-                                <strong>Platform Disclaimer</strong>
-                            </div>
-                            <p>“This platform provides educational medication safety information and does not replace professional medical advice. Always consult a licensed doctor or pharmacist before making medical decisions.”</p>
+                        <div className="flex gap-4 ml-auto">
+                            <button className="h-16 px-10 bg-white/5 rounded-[20px] font-black text-[11px] uppercase tracking-widest text-slate-400 hover:bg-white/10 hover:text-white transition-all">
+                                Cancel Changes
+                            </button>
+                            <button onClick={handleSave} className="btn-primary !h-16 !px-10 flex items-center gap-3 shadow-primary/20">
+                                <Save size={18} />
+                                <span className="text-[11px] uppercase tracking-[0.3em]">Commit Preferences</span>
+                            </button>
                         </div>
                     </div>
-                </div>
-            </main>
 
-            <style jsx>{`
-        .settings-page { background: #f8fafc; min-height: 100vh; }
-        .main-content { padding-top: 40px; padding-bottom: 80px; }
-        
-        .page-header { margin-bottom: 32px; }
-        .header-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: var(--primary-light);
-          color: var(--primary);
-          padding: 6px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 600;
-          margin-bottom: 16px;
-        }
-        .page-header h1 { font-size: 32px; font-weight: 800; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 16px; }
-
-        .settings-grid { display: grid; grid-template-columns: 260px 1fr; gap: 40px; }
-        
-        .settings-nav { display: flex; flex-direction: column; gap: 4px; }
-        .settings-nav-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 14px 18px;
-          border-radius: 14px;
-          color: #64748b;
-          font-weight: 700;
-          font-size: 14px;
-          text-align: left;
-          transition: all 0.2s;
-        }
-        .settings-nav-item:hover { background: #f1f5f9; color: var(--text-main); }
-        .settings-nav-item.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); border: 1px solid #e2e8f0; }
-
-        .settings-content { display: flex; flex-direction: column; gap: 24px; }
-        .settings-section { padding: 32px; background: white; border-radius: 24px; }
-        .settings-section h3 { font-size: 18px; font-weight: 800; margin-bottom: 24px; color: #0f172a; }
-        .section-desc { font-size: 14px; color: #64748b; margin-bottom: 32px; line-height: 1.6; }
-
-        .profile-edit { display: flex; gap: 32px; align-items: flex-start; }
-        .avatar-large {
-          width: 80px; height: 80px; background: var(--primary); color: white;
-          border-radius: 20px; display: flex; align-items: center; justify-content: center;
-          font-size: 24px; font-weight: 800;
-        }
-        .profile-fields { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 13px; font-weight: 700; color: #475569; }
-        .form-group input { padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-weight: 500; }
-
-        .settings-list { display: flex; flex-direction: column; gap: 8px; }
-        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f1f5f9; }
-        .setting-item:last-child { border-bottom: none; }
-        .item-info { flex: 1; padding-right: 40px; }
-        .item-info strong { display: block; font-size: 15px; color: #1e293b; margin-bottom: 4px; font-weight: 700; }
-        .item-info p { font-size: 13px; color: #64748b; line-height: 1.5; }
-
-        .data-actions-list { display: flex; flex-direction: column; gap: 16px; }
-        .data-action-item { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #f8fafc; border-radius: 16px; }
-        .d-a-info strong { display: block; font-size: 14px; color: #1e293b; margin-bottom: 4px; }
-        .d-a-info p { font-size: 12px; color: #64748b; }
-        .btn-sm { padding: 8px 16px; font-size: 12px; font-weight: 700; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
-        .btn-danger-outline { border: 1px solid #fee2e2; color: #ef4444; background: transparent; }
-        .btn-danger-outline:hover { background: #fee2e2; }
-
-        .danger-zone { border: 1px solid #fee2e2; background: #fff1f2; }
-
-        .page-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-        .btn-group { display: flex; gap: 12px; }
-        .save-success { font-size: 13px; color: var(--success); font-weight: 700; }
-        
-        .logout-btn { color: #64748b; font-weight: 700; }
-        .logout-btn:hover { background: #f1f5f9; }
-
-        .legal-disclaimer-box { background: #f0f7ff; border-color: var(--primary-light); margin-top: 40px; padding: 24px; border-radius: 20px; }
-        .d-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; color: var(--primary); }
-        .legal-disclaimer-box p { font-size: 13px; line-height: 1.6; color: #475569; font-weight: 500; }
-
-        /* Toggle Switch */
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .slider.round { border-radius: 34px; }
-        .slider.round:before { border-radius: 50%; }
-
-        @media (max-width: 992px) {
-          .settings-grid { grid-template-columns: 1fr; }
-          .settings-sidebar { display: none; }
-        }
-      `}</style>
+                    {/* Clinical Disclaimer */}
+                    <div className="card-premium !bg-white/[0.01] !p-10 border-white/5 relative overflow-hidden flex flex-col md:flex-row gap-8 items-center mt-12 opacity-50 hover:opacity-100 transition-opacity">
+                        <div className="w-14 h-14 bg-grad-dark rounded-2xl flex items-center justify-center text-primary shrink-0 border border-white/5">
+                            <LockIcon size={24} />
+                        </div>
+                        <p className="text-xs font-bold text-slate-500 leading-relaxed italic text-center md:text-left">
+                            "MediSafe AI is a medical-grade decision support platform. Configuration changes should follow clinical best practices. All safety algorithms are updated weekly against global pharmaceutical safety databases."
+                        </p>
+                    </div>
+                </main>
+            </div>
         </div>
     );
 }
+
+const CheckCircle2 = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+);

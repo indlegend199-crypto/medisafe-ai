@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import {
     FileText, Printer, Download, Share2, Shield,
-    Pill, Activity, AlertCircle, Clock, Calendar
+    Pill, Activity, AlertCircle, Clock, Calendar, Lock as LockIcon, Zap, ChevronRight, CheckCircle2
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function SummaryPage() {
     const [vault, setVault] = useState<any[]>([]);
@@ -24,219 +24,198 @@ export default function SummaryPage() {
     };
 
     return (
-        <div className="summary-page">
-            <main className="container main-content no-print">
-                <header className="page-header">
-                    <div className="header-badge">
-                        <FileText size={16} /> Clinical Reporting
-                    </div>
-                    <div className="header-flex">
-                        <div>
-                            <h1>Doctor Visit Summary</h1>
-                            <p className="subtitle">Export your current medication list and safety history for your healthcare provider.</p>
+        <div className="main-content">
+            <header className="mb-12 animate-fade no-print">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                    <div>
+                        <div className="flex items-center gap-2 bg-primary/10 w-fit px-4 py-1.5 rounded-full border border-primary/20 mb-6">
+                            <FileText size={12} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                                Clinical Reporting Module
+                            </span>
                         </div>
-                        <div className="header-actions">
-                            <button className="btn-secondary" onClick={handlePrint}><Printer size={18} /> Print Document</button>
-                            <button className="btn-primary"><Download size={18} /> Download PDF</button>
-                        </div>
+                        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Health <span className="text-gradient">Abstract</span></h1>
+                        <p className="text-slate-400 font-medium text-lg max-w-xl">Comprehensive clinical summary and molecular safety auditing for healthcare professionals.</p>
                     </div>
-                </header>
-            </main>
 
-            <div className="report-preview-container">
+                    <div className="flex items-center gap-4">
+                        <button onClick={handlePrint} className="h-16 px-8 bg-white/5 rounded-2xl flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/10 hover:text-white transition-all border border-white/5">
+                            <Printer size={18} /> Print Fragment
+                        </button>
+                        <button className="btn-primary !h-16 !px-10 flex items-center gap-3 shadow-primary/20">
+                            <Download size={20} />
+                            <span className="text-[11px] uppercase tracking-[0.3em]">Generate Secure PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div className="flex justify-center">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="medical-report card"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full max-w-[1000px] bg-white text-slate-900 !p-16 rounded-[48px] shadow-2xl relative overflow-hidden medical-report"
                 >
+                    {/* Watermark */}
+                    <div className="absolute top-0 right-0 p-10 opacity-[0.03] pointer-events-none rotate-12">
+                        <Shield size={600} />
+                    </div>
+
                     {/* Report Header */}
-                    <div className="report-header">
-                        <div className="rep-left">
-                            <div className="rep-logo">
-                                <Shield className="icon" size={32} />
-                                <div>
-                                    <h2>MediSafe AI</h2>
-                                    <span>Advanced Medication Safety Portal</span>
-                                </div>
+                    <div className="flex justify-between items-start border-b-2 border-slate-100 pb-12 mb-12 relative z-10">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center text-white">
+                                <Shield size={32} />
+                            </div>
+                            <div>
+                                <h2 className="text-2xl font-black tracking-tighter uppercase">MediSafe <span className="text-primary italic">AI</span></h2>
+                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Advanced Safety Architecture</p>
                             </div>
                         </div>
-                        <div className="rep-right">
-                            <div className="rep-meta">
-                                <span><strong>Report ID:</strong> MS-2025-0310</span>
-                                <span><strong>Generated On:</strong> {reportDate}</span>
-                            </div>
+                        <div className="text-right space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Report Metadata</p>
+                            <p className="text-sm font-bold">ID: MS-88219-CLINICAL</p>
+                            <p className="text-sm font-bold">DATE: {reportDate}</p>
                         </div>
                     </div>
 
-                    <div className="report-title-section">
-                        <h1>Patient Medication Safety Summary</h1>
-                        <p>This report contains the patient's self-reported medication profile and AI-analyzed interaction risks.</p>
+                    <div className="text-center mb-16 relative z-10">
+                        <h1 className="text-4xl font-black tracking-tighter mb-4 text-slate-900">Clinical Medication Summary</h1>
+                        <p className="text-slate-500 font-bold max-w-xl mx-auto italic">Localized pharmacological analysis and self-reported symptomatic correlations.</p>
                     </div>
 
-                    <div className="report-body">
-                        {/* Patient Info Section */}
-                        <div className="report-section">
-                            <h3 className="section-title"><Activity size={18} /> Patient Profile</h3>
-                            <div className="profile-grid">
-                                <div className="p-field"><span>Name:</span> <strong>Alex Doe</strong></div>
-                                <div className="p-field"><span>Date of Birth:</span> <strong>12/05/1985</strong></div>
-                                <div className="p-field"><span>Blood Type:</span> <strong>A+</strong></div>
-                                <div className="p-field"><span>Primary Physician:</span> <strong>Dr. Sarah Jenkins</strong></div>
-                            </div>
-                        </div>
-
-                        {/* active Medications */}
-                        <div className="report-section">
-                            <h3 className="section-title"><Pill size={18} /> Active Medications ({vault.length})</h3>
-                            <table className="med-table">
-                                <thead>
-                                    <tr>
-                                        <th>Medicine Name</th>
-                                        <th>Dosage</th>
-                                        <th>Frequency</th>
-                                        <th>Timing</th>
-                                        <th>Purpose</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {vault.length > 0 ? vault.map((m, i) => (
-                                        <tr key={i}>
-                                            <td><strong>{m.name}</strong></td>
-                                            <td>{m.dosage}</td>
-                                            <td>{m.frequency}</td>
-                                            <td>{m.timing}</td>
-                                            <td>{m.purpose}</td>
-                                        </tr>
-                                    )) : (
-                                        <tr><td colSpan={5} className="empty-row">No medications in vault.</td></tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Safety Alerts */}
-                        <div className="report-section">
-                            <h3 className="section-title"><AlertCircle size={18} /> AI Safety Assessment</h3>
-                            <div className="safety-alert-box high">
-                                <strong>Potential Interaction Detected:</strong>
-                                <p>Analysis indicates a potential high-risk interaction between <strong>Warfarin</strong> and <strong>Ibuprofen</strong> currently in the vault. This combination may increase bleeding propensity.</p>
-                            </div>
-                        </div>
-
-                        {/* Recent symptoms */}
-                        <div className="report-section">
-                            <h3 className="section-title"><Clock size={16} /> Recent Symptom History</h3>
-                            <div className="symptom-grid-rep">
-                                {symptoms.length > 0 ? symptoms.slice(0, 4).map((s, i) => (
-                                    <div key={i} className="symp-rep-card">
-                                        <div className="s-date">{s.date}</div>
-                                        <div className="s-name">{s.name}</div>
-                                        <div className="s-sev">Severity: {s.severity}</div>
+                    <div className="space-y-12 relative z-10">
+                        {/* Profile Analysis */}
+                        <section className="space-y-6">
+                            <h3 className="flex items-center gap-4 text-[12px] font-black uppercase tracking-[0.3em] text-slate-400">
+                                <Activity size={18} className="text-primary" /> Patient Metadata
+                            </h3>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 p-10 bg-slate-50 rounded-[32px] border border-slate-100">
+                                {[
+                                    { label: "Patient Name", val: "Alex Doe" },
+                                    { label: "Date of Birth", val: "12/05/1985" },
+                                    { label: "Blood Stratum", val: "A+ Positive" },
+                                    { label: "Clinical Lead", val: "Dr. Jenkins" }
+                                ].map((item, i) => (
+                                    <div key={i} className="space-y-1">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{item.label}</p>
+                                        <p className="text-base font-black text-slate-800">{item.val}</p>
                                     </div>
-                                )) : <p className="empty-text-mini">No symptoms logged in the last 30 days.</p>}
+                                ))}
                             </div>
-                        </div>
+                        </section>
+
+                        {/* active Agents */}
+                        <section className="space-y-6">
+                            <h3 className="flex items-center gap-4 text-[12px] font-black uppercase tracking-[0.3em] text-slate-400">
+                                <Pill size={18} className="text-primary" /> Active Pharmacological Agents ({vault.length})
+                            </h3>
+                            <div className="overflow-hidden border border-slate-100 rounded-[32px]">
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-slate-50">
+                                            <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Molecular Name</th>
+                                            <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Dosage</th>
+                                            <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Frequency</th>
+                                            <th className="p-6 text-[10px] font-black uppercase tracking-widest text-slate-400">Mechanism</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-100">
+                                        {vault.length > 0 ? vault.map((m, i) => (
+                                            <tr key={i} className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-6"><span className="text-lg font-black text-slate-800 tracking-tight">{m.name}</span></td>
+                                                <td className="p-6 text-sm font-bold text-slate-600">{m.dosage}</td>
+                                                <td className="p-6 text-sm font-bold text-slate-600">{m.frequency}</td>
+                                                <td className="p-6 text-sm font-bold text-slate-600 italic">"{m.purpose}"</td>
+                                            </tr>
+                                        )) : (
+                                            <tr><td colSpan={4} className="p-16 text-center text-slate-400 italic">Zero agents detected in active vault.</td></tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        {/* Safety Synthesis */}
+                        <section className="space-y-6">
+                            <h3 className="flex items-center gap-4 text-[12px] font-black uppercase tracking-[0.3em] text-slate-400">
+                                <AlertCircle size={18} className="text-red-500" /> Molecular Safety Synthesis
+                            </h3>
+                            <div className="p-10 bg-red-50 border-2 border-red-100 rounded-[32px] space-y-4">
+                                <div className="flex items-center gap-3 text-red-600">
+                                    <Zap size={20} />
+                                    <h4 className="text-lg font-black tracking-tight">High-Risk Conflict Vector Detected</h4>
+                                </div>
+                                <p className="text-base font-bold text-red-900/70 leading-relaxed italic">
+                                    "Autonomous analysis indicates a high-risk molecular interaction between <strong>Warfarin</strong> and <strong>Ibuprofen</strong> currently staged in the vault. This combination optimizes for adverse vascular bleeding events. Immediate clinical review is mandated."
+                                </p>
+                            </div>
+                        </section>
+
+                        {/* Recent History */}
+                        <section className="space-y-6">
+                            <h3 className="flex items-center gap-4 text-[12px] font-black uppercase tracking-[0.3em] text-slate-400">
+                                <Clock size={18} className="text-primary" /> Temporal Symptom Log (Last 30 Days)
+                            </h3>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                {symptoms.length > 0 ? symptoms.slice(0, 4).map((s, i) => (
+                                    <div key={i} className="p-6 bg-slate-50 border border-slate-100 rounded-2xl flex justify-between items-center group hover:border-primary/20 transition-all">
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{s.date}</p>
+                                            <p className="text-lg font-black text-slate-800 tracking-tight">{s.name}</p>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                                            s.severity === 'Severe' ? 'bg-red-100 text-red-600 border-red-200' : 'bg-slate-200 text-slate-600 border-slate-300'
+                                        }`}>{s.severity}</span>
+                                    </div>
+                                )) : (
+                                    <div className="md:col-span-2 p-10 bg-slate-50 rounded-[32px] border border-slate-100 text-center text-slate-400 italic font-bold">
+                                        Zero symptomatic events recorded in current cycle.
+                                    </div>
+                                )}
+                            </div>
+                        </section>
                     </div>
 
-                    <div className="report-footer">
-                        <div className="disclaimer-full">
-                            <h4>Legal Disclaimer</h4>
-                            <p>This report is for informational purposes only. The interaction analysis is performed by an AI system based on user-provided data and medical databases. It does NOT constitute medical advice. A licensed physician or pharmacist must review all medications and the clinical relevance of any identified interactions before making treatment decisions.</p>
+                    {/* Report Footer */}
+                    <footer className="mt-20 pt-16 border-t-2 border-slate-100 space-y-16 relative z-10">
+                        <div className="p-10 bg-slate-900 rounded-[32px] text-white space-y-4">
+                            <h4 className="flex items-center gap-3 text-[12px] font-black uppercase tracking-[0.3em]">
+                                <LockIcon size={16} className="text-primary" /> Clinical Disclosure Protocol
+                            </h4>
+                            <p className="text-[12px] font-bold text-white/50 leading-relaxed italic">
+                                This abstract is generated by an autonomous clinical reasoning engine. It does not replace professional medical judgment. All molecular interactions must be validated by a licensed physician or pharmacist. MediSafe AI provides deterministic reference nodes based on global pharmaceutical safety repositories.
+                            </p>
                         </div>
-                        <div className="signatures">
-                            <div className="sig-line"><span>Patient Signature</span></div>
-                            <div className="sig-line"><span>Physician Signature</span></div>
+                        
+                        <div className="flex justify-between gap-20">
+                            <div className="flex-1 border-t-2 border-slate-200 pt-4 text-center">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Patient Authorization</p>
+                            </div>
+                            <div className="flex-1 border-t-2 border-slate-200 pt-4 text-center">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Clinical Validation</p>
+                            </div>
                         </div>
-                    </div>
+                    </footer>
                 </motion.div>
             </div>
 
-            <style jsx>{`
-        .summary-page { background: #f1f5f9; min-height: 100vh; padding-bottom: 80px; }
-        .main-content { padding-top: 40px; padding-bottom: 32px; }
-        
-        .page-header { margin-bottom: 0; }
-        .header-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: var(--primary-light);
-          color: var(--primary);
-          padding: 6px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 600;
-          margin-bottom: 16px;
-        }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .page-header h1 { font-size: 32px; font-weight: 800; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 16px; }
-
-        .report-preview-container { display: flex; justify-content: center; padding: 20px; }
-        
-        .medical-report {
-            width: 850px;
-            background: white;
-            padding: 60px;
-            border-radius: 4px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            color: #1e293b;
-        }
-
-        .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 32px; margin-bottom: 40px; }
-        .rep-logo { display: flex; align-items: center; gap: 16px; }
-        .rep-logo .icon { color: var(--primary); }
-        .rep-logo h2 { font-size: 24px; font-weight: 800; color: var(--text-main); line-height: 1; margin-bottom: 4px; }
-        .rep-logo span { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-
-        .rep-meta { display: flex; flex-direction: column; text-align: right; gap: 4px; font-size: 13px; color: var(--text-muted); }
-
-        .report-title-section { text-align: center; margin-bottom: 48px; }
-        .report-title-section h1 { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; display: inline-block; padding-bottom: 8px; }
-        .report-title-section p { font-size: 14px; color: var(--text-muted); }
-
-        .report-section { margin-bottom: 40px; }
-        .section-title { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #0f172a; margin-bottom: 20px; border-left: 4px solid var(--primary); padding-left: 12px; }
-
-        .profile-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; background: #f8fafc; padding: 24px; border-radius: 12px; }
-        .p-field { font-size: 14px; }
-        .p-field span { color: var(--text-muted); margin-right: 8px; }
-
-        .med-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-        .med-table th { text-align: left; padding: 12px; background: #f1f5f9; font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; }
-        .med-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-        .empty-row { text-align: center; color: var(--text-muted); font-style: italic; padding: 32px; }
-
-        .safety-alert-box { padding: 20px; border-radius: 12px; border: 1px solid; margin-top: 12px; }
-        .safety-alert-box.high { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-        .safety-alert-box strong { display: block; margin-bottom: 6px; font-size: 15px; }
-        .safety-alert-box p { font-size: 14px; line-height: 1.5; }
-
-        .symptom-grid-rep { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .symp-rep-card { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; }
-        .s-date { font-size: 10px; color: var(--text-muted); font-weight: 700; }
-        .s-name { font-size: 14px; font-weight: 700; color: var(--text-main); }
-        .s-sev { font-size: 12px; color: var(--text-muted); }
-
-        .report-footer { margin-top: 60px; border-top: 2px solid #e2e8f0; padding-top: 40px; }
-        .disclaimer-full { background: #f8fafc; padding: 24px; border-radius: 12px; margin-bottom: 48px; }
-        .disclaimer-full h4 { font-size: 14px; font-weight: 800; margin-bottom: 12px; color: #0f172a; }
-        .disclaimer-full p { font-size: 12px; line-height: 1.6; color: #64748b; }
-
-        .signatures { display: flex; justify-content: space-between; }
-        .sig-line { width: 40%; border-top: 1px solid #94a3b8; padding-top: 8px; text-align: center; }
-        .sig-line span { font-size: 12px; color: #64748b; font-weight: 600; }
-
-        @media print {
-            .no-print { display: none !important; }
-            .summary-page { background: white; padding: 0; }
-            .report-preview-container { padding: 0; }
-            .medical-report { width: 100%; box-shadow: none; padding: 0; }
-            .app-layout { display: block !important; }
-            .sidebar { display: none !important; }
-            .main-content-wrapper { margin: 0 !important; padding: 0 !important; }
-        }
-      `}</style>
+            <style jsx global>{`
+                @media print {
+                    .no-print { display: none !important; }
+                    body { background: white !important; padding: 0 !important; }
+                    .main-content { padding: 0 !important; margin: 0 !important; }
+                    .medical-report { 
+                        box-shadow: none !important; 
+                        padding: 0 !important; 
+                        width: 100% !important; 
+                        max-width: none !important;
+                        border-radius: 0 !important;
+                    }
+                    .sidebar-premium { display: none !important; }
+                    .main-layout { padding: 0 !important; margin: 0 !important; }
+                }
+            `}</style>
         </div>
     );
 }

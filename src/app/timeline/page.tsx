@@ -3,66 +3,65 @@
 import { useState, useEffect } from "react";
 import {
     History as HistoryIcon, Search, Pill, Brain, AlertCircle,
-    CheckCircle2, Plus, ArrowRight, Calendar, Filter, Download
+    CheckCircle2, Plus, ArrowRight, Calendar, Filter, Download, Zap as ZapIcon, Lock as LockIcon
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TimelinePage() {
     const [events, setEvents] = useState<any[]>([]);
     const [filter, setFilter] = useState("all");
 
     useEffect(() => {
-        // Mock historical data
         const mockEvents = [
             {
                 id: 1,
                 date: "March 10, 2025",
                 time: "10:45 AM",
                 type: "scan",
-                title: "Prescription Scanned",
-                details: "Detected Metformin, Atorvastatin, and Lisinopril. No new interactions found.",
-                icon: <Brain size={18} />,
-                color: "blue"
+                title: "Prescription Analysis",
+                details: "Autonomous extraction of Metformin, Atorvastatin, and Lisinopril sequence. No molecular conflicts identified.",
+                icon: <Brain size={22} />,
+                color: "text-primary"
             },
             {
                 id: 2,
                 date: "March 8, 2025",
                 time: "02:15 PM",
                 type: "vault",
-                title: "Medicine Added to Vault",
-                details: "Ibuprofen 400mg added to regular medication list.",
-                icon: <Pill size={18} />,
-                color: "green"
+                title: "Molecular Agent Addition",
+                details: "Ibuprofen 400mg formulation commited to the clinical vault for regular administration.",
+                icon: <Pill size={22} />,
+                color: "text-emerald-400"
             },
             {
                 id: 3,
                 date: "March 8, 2025",
                 time: "02:16 PM",
                 type: "warning",
-                title: "Interaction Warning Detected",
-                details: "Critical interaction between Ibuprofen and Warfarin identified by safety engine.",
-                icon: <AlertCircle size={18} />,
-                color: "red"
+                title: "Incompatibility Detected",
+                details: "Critical interaction signal identified between Ibuprofen and Warfarin vectors. Safety protocol triggered.",
+                icon: <AlertCircle size={22} />,
+                color: "text-red-400"
             },
             {
                 id: 4,
                 date: "Feb 28, 2025",
                 time: "09:00 AM",
                 type: "symptom",
-                title: "Symptom Logged",
-                details: "Reported mild stomach discomfort. Severity: Low.",
-                icon: <CheckCircle2 size={18} />,
-                color: "yellow"
+                title: "Bio-Signal Commited",
+                details: "Logged mild gastrointestinal discomfort. Mapping symptomatic responses to current pharmacological agents.",
+                icon: <Zap size={22} />,
+                color: "text-amber-400"
             },
             {
                 id: 5,
                 date: "Feb 15, 2025",
                 time: "11:30 AM",
                 type: "report",
-                title: "Medical Report Generated",
-                details: "Monthly safety summary exported for Dr. Sarah Jenkins.",
-                icon: <Calendar size={18} />,
-                color: "purple"
+                title: "Clinical Abstract Export",
+                details: "Monthly security summary and interaction synthesis generated for clinical lead.",
+                icon: <Calendar size={22} />,
+                color: "text-primary"
             }
         ];
         setEvents(mockEvents);
@@ -71,151 +70,139 @@ export default function TimelinePage() {
     const filteredEvents = filter === "all" ? events : events.filter(e => e.type === filter);
 
     return (
-        <div className="timeline-page">
-            <main className="container main-content">
-                <header className="page-header">
-                    <div className="header-badge">
-                        <HistoryIcon size={16} /> Treatment History
-                    </div>
-                    <div className="header-flex">
-                        <div>
-                            <h1>Patient Medication Timeline</h1>
-                            <p className="subtitle">A chronological record of your medication scans, changes, and safety alerts.</p>
+        <div className="main-content">
+            <header className="mb-12 animate-fade">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                    <div>
+                        <div className="flex items-center gap-2 bg-primary/10 w-fit px-4 py-1.5 rounded-full border border-primary/20 mb-6">
+                            <HistoryIcon size={12} className="text-primary" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                                Temporal Security Log
+                            </span>
                         </div>
-                        <div className="header-actions">
-                            <button className="btn-secondary"><Download size={18} /> Export History</button>
-                        </div>
+                        <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Clinical <span className="text-gradient">Timeline</span></h1>
+                        <p className="text-slate-400 font-medium text-lg max-w-xl">A decentralized audit of molecular screenings, pharmaceutical events, and safety protocol triggers.</p>
                     </div>
-                </header>
 
-                <div className="timeline-controls card">
-                    <div className="filter-group">
-                        <Filter size={16} />
-                        <button className={`filter-btn ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>All Activities</button>
-                        <button className={`filter-btn ${filter === 'scan' ? 'active' : ''}`} onClick={() => setFilter('scan')}>Scans</button>
-                        <button className={`filter-btn ${filter === 'warning' ? 'active' : ''}`} onClick={() => setFilter('warning')}>Warnings</button>
-                        <button className={`filter-btn ${filter === 'vault' ? 'active' : ''}`} onClick={() => setFilter('vault')}>Vault</button>
-                    </div>
-                    <div className="search-box">
-                        <Search size={16} />
-                        <input type="text" placeholder="Search history..." />
-                    </div>
+                    <button className="h-16 px-10 bg-white/5 rounded-2xl flex items-center gap-4 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:bg-white/10 hover:text-white transition-all border border-white/5 shadow-2xl">
+                        <Download size={20} />
+                        <span>Export Temporal Log</span>
+                    </button>
+                </div>
+            </header>
+
+            <div className="flex flex-wrap items-center justify-between gap-8 mb-16 card-premium !bg-white/[0.02] border-white/5 !p-6 backdrop-blur-3xl">
+                <div className="flex items-center gap-2">
+                    {[
+                        { id: "all", label: "All Events" },
+                        { id: "scan", label: "Scans" },
+                        { id: "warning", label: "Signals" },
+                        { id: "vault", label: "Vault" }
+                    ].map((btn) => (
+                        <button
+                            key={btn.id}
+                            onClick={() => setFilter(btn.id)}
+                            className={`px-6 py-3 rounded-xl font-black text-[9px] uppercase tracking-widest transition-all ${
+                                filter === btn.id 
+                                ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                                : 'text-slate-500 hover:text-white'
+                            }`}
+                        >
+                            {btn.label}
+                        </button>
+                    ))}
                 </div>
 
-                <div className="timeline-visual">
-                    {filteredEvents.length === 0 ? (
-                        <div className="empty-timeline card">
-                            <HistoryIcon size={64} color="var(--border)" strokeWidth={1} />
-                            <h3>No events found</h3>
-                            <p>Try adjusting your filters or record your first medication activity.</p>
-                        </div>
-                    ) : (
-                        <div className="timeline-list">
-                            {filteredEvents.map((event, index) => (
-                                <div key={event.id} className="timeline-item-wrapper">
-                                    <div className="timeline-date-side">
-                                        <span className="date-main">{event.date}</span>
-                                        <span className="date-sub">{event.time}</span>
+                <div className="flex items-center gap-4 bg-white/5 px-6 py-3 rounded-2xl border border-white/5 group grow max-w-md">
+                    <Search size={16} className="text-slate-500 group-focus-within:text-primary transition-colors" />
+                    <input type="text" placeholder="QUERY TEMPORAL DATABASE..." className="bg-transparent border-none text-[10px] font-black uppercase tracking-widest text-white placeholder:text-slate-700 focus:ring-0 w-full" />
+                </div>
+            </div>
+
+            <div className="relative pl-12 md:pl-64">
+                {/* Central Line */}
+                <div className="absolute left-[22px] md:left-[199px] top-0 bottom-0 w-[2px] bg-grad-dark opacity-20"></div>
+                
+                <div className="space-y-16">
+                    <AnimatePresence mode="popLayout">
+                        {filteredEvents.length === 0 ? (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-32 space-y-6">
+                                <HistoryIcon size={64} className="text-white/5 mx-auto" />
+                                <p className="text-slate-500 font-black uppercase tracking-widest text-xs">Zero Temporal Records Found</p>
+                            </motion.div>
+                        ) : (
+                            filteredEvents.map((event, index) => (
+                                <div key={event.id} className="relative group">
+                                    {/* Date Side */}
+                                    <div className="hidden md:flex absolute -left-64 w-48 text-right flex flex-col gap-1 pt-6">
+                                        <span className="text-sm font-black text-white tracking-tight">{event.date}</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{event.time}</span>
                                     </div>
 
-                                    <div className={`timeline-node ${event.color}`}>
-                                        {event.icon}
+                                    {/* Node */}
+                                    <div className="absolute -left-12 md:-left-8 top-6 w-12 h-12 bg-bg-deep border-4 border-white/5 rounded-2xl z-10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:border-primary/30 transition-all duration-500 shadow-2xl">
+                                        <div className={`transition-colors ${event.color}`}>
+                                            {event.icon}
+                                        </div>
                                     </div>
 
+                                    {/* Card */}
                                     <motion.div
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.1 }}
-                                        className="timeline-card card"
+                                        className="card-premium !p-8 border-white/5 hover:border-white/10 hover:bg-white/[0.03] transition-all duration-500"
                                     >
-                                        <div className="card-top">
-                                            <span className={`type-badge ${event.color}`}>{event.type}</span>
-                                            <h4 className="card-title">{event.title}</h4>
+                                        <div className="md:hidden flex justify-between items-center mb-6">
+                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{event.date}</span>
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{event.time}</span>
                                         </div>
-                                        <p className="card-details">{event.details}</p>
-                                        <div className="card-footer">
-                                            <button className="btn-text">View Details <ArrowRight size={14} /></button>
+
+                                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                                            <div className="flex items-center gap-4">
+                                                <span className={`label-caps !text-[9px] ${
+                                                    event.type === 'warning' ? '!text-red-400 !bg-red-500/10' :
+                                                    event.type === 'vault' ? '!text-emerald-400 !bg-emerald-500/10' :
+                                                    '!text-primary !bg-primary/10'
+                                                }`}>
+                                                    {event.type} event
+                                                </span>
+                                                <h4 className="text-2xl font-black text-white tracking-tight group-hover:text-primary transition-colors">{event.title}</h4>
+                                            </div>
+                                            <button className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">
+                                                Protocol Details <ArrowRight size={14} />
+                                            </button>
                                         </div>
+                                        
+                                        <p className="text-slate-400 font-medium leading-relaxed max-w-3xl text-base italic border-l-2 border-white/5 pl-6">
+                                            {event.details}
+                                        </p>
                                     </motion.div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                            ))
+                        )}
+                    </AnimatePresence>
                 </div>
-            </main>
+            </div>
 
-            <style jsx>{`
-        .timeline-page { background: #f8fafc; min-height: 100vh; }
-        .main-content { padding-top: 40px; padding-bottom: 80px; }
-        
-        .page-header { margin-bottom: 32px; }
-        .header-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: var(--primary-light);
-          color: var(--primary);
-          padding: 6px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 600;
-          margin-bottom: 16px;
-        }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; }
-        .page-header h1 { font-size: 32px; font-weight: 800; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 16px; }
-
-        .timeline-controls { padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; border-radius: 16px; border: 1px solid var(--border); }
-        .filter-group { display: flex; align-items: center; gap: 8px; color: var(--text-muted); }
-        .filter-btn { padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-        .filter-btn:hover { background: #f1f5f9; color: var(--primary); }
-        .filter-btn.active { background: var(--primary); color: white; }
-
-        .search-box { display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 16px; border-radius: 999px; width: 280px; }
-        .search-box input { background: transparent; border: none; font-size: 13px; width: 100%; }
-
-        .timeline-list { position: relative; padding-left: 200px; }
-        .timeline-list::before { content: ''; position: absolute; left: 199px; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
-
-        .timeline-item-wrapper { display: flex; position: relative; margin-bottom: 40px; align-items: flex-start; }
-        
-        .timeline-date-side { position: absolute; left: -200px; width: 160px; text-align: right; display: flex; flex-direction: column; top: 12px; }
-        .date-main { font-size: 14px; font-weight: 800; color: var(--text-main); }
-        .date-sub { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-
-        .timeline-node { width: 44px; height: 44px; border-radius: 50%; background: white; border: 4px solid #f8fafc; z-index: 10; display: flex; align-items: center; justify-content: center; position: absolute; left: -22px; margin-left: -20px; box-shadow: var(--shadow-sm); }
-        .timeline-node.blue { color: #3b82f6; border-color: #dbeafe; }
-        .timeline-node.green { color: #10b981; border-color: #d1fae5; }
-        .timeline-node.red { color: #ef4444; border-color: #fee2e2; }
-        .timeline-node.yellow { color: #f59e0b; border-color: #fef3c7; }
-        .timeline-node.purple { color: #8b5cf6; border-color: #ede9fe; }
-
-        .timeline-card { flex: 1; padding: 24px; margin-left: 40px; border-radius: 20px; background: white; border: 1px solid var(--border); transition: transform 0.2s; }
-        .timeline-card:hover { transform: translateX(8px); border-color: var(--primary-light); }
-
-        .card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .type-badge { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
-        .type-badge.blue { background: #eff6ff; color: #1d4ed8; }
-        .type-badge.green { background: #ecfdf5; color: #047857; }
-        .type-badge.red { background: #fef2f2; color: #b91c1c; }
-        .type-badge.yellow { background: #fffbeb; color: #b45309; }
-        .type-badge.purple { background: #f5f3ff; color: #6d28d9; }
-
-        .card-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
-        .card-details { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-
-        .card-footer { border-top: 1px solid #f1f5f9; padding-top: 12px; }
-        .btn-text { font-size: 12px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 4px; }
-
-        @media (max-width: 768px) {
-          .timeline-list { padding-left: 40px; }
-          .timeline-list::before { left: 40px; }
-          .timeline-node { left: 18px; }
-          .timeline-date-side { position: static; text-align: left; width: auto; margin-bottom: 12px; }
-          .timeline-item-wrapper { flex-direction: column; }
-          .timeline-card { margin-left: 0; width: 100%; margin-top: 20px; }
-        }
-      `}</style>
+            {/* Protocol Footer */}
+            <div className="mt-32 card-premium !bg-grad-dark !p-12 border-white/5 relative overflow-hidden flex flex-col items-center text-center gap-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center text-primary border border-primary/20 shadow-2xl">
+                    <LockIcon size={28} />
+                </div>
+                <div className="max-w-2xl space-y-4">
+                    <h5 className="label-caps !text-[12px] !text-white flex items-center justify-center gap-3">
+                         Temporal Integrity Assurance
+                    </h5>
+                    <p className="text-xs font-bold text-slate-500 italic leading-relaxed">
+                        Temporal event logs are cryptographically hashed and synchronized with your local clinical security module. This provides an immutable record of pharmaceutical surveillance and safety adherence for regulatory and clinical auditing.
+                    </p>
+                </div>
+            </div>
         </div>
     );
 }
+
+const Zap = ({ size, className }: { size: number, className?: string }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M4 14.75 15.3 3 12.1 9.25 20 9.25 8.7 21 11.9 14.75H4Z"/></svg>
+);
