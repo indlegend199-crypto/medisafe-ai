@@ -3,68 +3,66 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-    Shield, Brain, Pill, History, AlertCircle,
-    FileText, Activity, LayoutDashboard, Settings, Menu, X
+  Shield, Brain, Pill, History, AlertCircle, Users,
+  FileText, Activity, LayoutDashboard, Settings, Menu, X
 } from "lucide-react";
 import { useState } from "react";
 
 export default function Sidebar() {
-    const pathname = usePathname();
-    const [isOpen, setIsOpen] = useState(true);
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(true);
 
-    const menuItems = [
-        { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
-        { name: "Medication Vault", href: "/vault", icon: <Pill size={20} /> },
-        { name: "Interaction Checker", href: "/checker", icon: <Shield size={20} /> },
-        { name: "Prescription Scanner", href: "/scanner", icon: <Brain size={20} /> },
-        { name: "Medication Timeline", href: "/timeline", icon: <History size={20} /> },
-        { name: "Safety Alerts", href: "/alerts", icon: <AlertCircle size={20} /> },
-        { name: "Doctor Reports", href: "/summary", icon: <FileText size={20} /> },
-        { name: "Settings", href: "/settings", icon: <Settings size={20} /> },
-    ];
+  const menuItems = [
+    { name: "Dashboard", href: "/dashboard", icon: <LayoutDashboard size={20} /> },
+    { name: "Patient Profiles", href: "/profiles", icon: <Users size={20} /> },
+    { name: "AI Assistant", href: "/assistant", icon: <Brain size={20} /> },
+    { name: "Medication Vault", href: "/vault", icon: <Pill size={20} /> },
+    { name: "Interaction Checker", href: "/checker", icon: <Shield size={20} /> },
+    { name: "Prescription Scanner", href: "/scanner", icon: <Activity size={20} /> },
+  ];
 
-    if (pathname === "/") return null;
+  if (pathname === "/") return null;
 
-    return (
-        <>
-            <button className="sidebar-toggle" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+  return (
+    <>
+      <button className="sidebar-toggle" onClick={() => setIsOpen(!isOpen)}>
+        {isOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
 
-            <aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
-                <div className="sidebar-header">
-                    <Link href="/" className="logo">
-                        <Shield className="logo-icon" size={28} />
-                        <span className="logo-text">MediSafe <span className="logo-accent">AI</span></span>
-                    </Link>
-                </div>
+      <aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
+        <div className="sidebar-header">
+          <Link href="/" className="logo">
+            <Shield className="logo-icon" size={28} />
+            <span className="logo-text">MediSafe <span className="logo-accent">AI</span></span>
+          </Link>
+        </div>
 
-                <nav className="sidebar-nav">
-                    {menuItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`nav-item ${pathname === item.href ? "active" : ""}`}
-                        >
-                            {item.icon}
-                            <span className="nav-text">{item.name}</span>
-                        </Link>
-                    ))}
-                </nav>
+        <nav className="sidebar-nav">
+          {menuItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`nav-item ${pathname === item.href ? "active" : ""}`}
+            >
+              {item.icon}
+              <span className="nav-text">{item.name}</span>
+            </Link>
+          ))}
+        </nav>
 
-                <div className="sidebar-footer">
-                    <div className="user-info">
-                        <div className="user-avatar">AD</div>
-                        <div className="user-details">
-                            <span className="user-name">Alex Doe</span>
-                            <span className="user-role">Patient Profile</span>
-                        </div>
-                    </div>
-                    <p className="disclaimer-mini">Educational use only. Not medical advice.</p>
-                </div>
-            </aside>
+        <div className="sidebar-footer">
+          <div className="user-info">
+            <div className="user-avatar">AD</div>
+            <div className="user-details">
+              <span className="user-name">Alex Doe</span>
+              <span className="user-role">Patient Profile</span>
+            </div>
+          </div>
+          <p className="disclaimer-mini">Educational use only. Not medical advice.</p>
+        </div>
+      </aside>
 
-            <style jsx>{`
+      <style jsx>{`
         .sidebar {
           width: 280px;
           height: 100vh;
@@ -176,6 +174,6 @@ export default function Sidebar() {
           .sidebar.open { transform: translateX(0); box-shadow: 20px 0 50px rgba(0,0,0,0.1); }
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }

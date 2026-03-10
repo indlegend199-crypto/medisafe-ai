@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import {
     Camera, Upload, X, Shield, Brain, ChevronRight,
     Search, CheckCircle2, AlertCircle, Clock, Info,
-    ArrowRight, Trash2, Pill, Activity, Wand2, Sparkles, Zap, Lock as LockIcon, Microscope, Plus
+    ArrowRight, Trash2, Pill, Activity, Wand2, Sparkles, Zap, Lock as LockIcon, Microscope, Plus, Edit2
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +16,8 @@ interface RxResult {
     description: string;
     timing: string;
     risks: string[];
+    sideEffects?: string[];
+    dosageWarnings?: string;
 }
 
 interface Prescription {
@@ -36,6 +38,8 @@ export default function ScannerPage() {
     const [medicines, setMedicines] = useState<string[]>([]);
     const [analysis, setAnalysis] = useState<RxResult | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [editingIndex, setEditingIndex] = useState<number | null>(null);
+    const [editingValue, setEditingValue] = useState("");
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -88,6 +92,13 @@ export default function ScannerPage() {
         if (name.trim()) setMedicines(prev => [...prev, name.trim()]);
     };
 
+    const updateMed = (index: number, newValue: string) => {
+        const updated = [...medicines];
+        updated[index] = newValue;
+        setMedicines(updated);
+        setEditingIndex(null);
+    };
+
     const reset = () => {
         setFile(null);
         setPreview(null);
@@ -104,20 +115,20 @@ export default function ScannerPage() {
                     <div className="flex items-center gap-2 mb-4 bg-emerald-500/10 w-fit px-4 py-1.5 rounded-full border border-emerald-500/10">
                         <Microscope size={12} className="text-emerald-600" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">
-                            Prescription Vision AI 2.0
+                            Smart Prescription Vision
                         </span>
                     </div>
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
                         <div>
-                            <h1 className="text-6xl font-black tracking-tight mb-4">Vision <span className="text-primary italic">Interpreter</span></h1>
-                            <p className="text-slate-500 text-xl max-w-2xl leading-relaxed">Decode handwritten prescriptions and identify complex medical instructions with clinical-grade accuracy.</p>
+                            <h1 className="text-6xl font-black tracking-tight mb-4">AI <span className="text-primary italic">Scanner</span></h1>
+                            <p className="text-slate-500 text-xl max-w-2xl leading-relaxed">Advanced OCR and clinical reasoning for safe medication management.</p>
                         </div>
 
                         <div className="flex items-center gap-8 border-l border-slate-200 pl-8 h-fit">
                             {[
                                 { step: 1, label: "Capture" },
-                                { step: 2, label: "Extract" },
-                                { step: 3, label: "Analyze" }
+                                { step: 2, label: "Confirm" },
+                                { step: 3, label: "Report" }
                             ].map((s) => (
                                 <div key={s.step} className={`flex items-center gap-3 ${step >= s.step ? 'opacity-100' : 'opacity-30'}`}>
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs ${step === s.step ? 'bg-primary text-white shadow-lg shadow-primary/20' : step > s.step ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
@@ -150,10 +161,10 @@ export default function ScannerPage() {
                                     <div className="w-32 h-32 bg-primary/5 rounded-[40px] flex items-center justify-center mx-auto mb-10 shadow-inner group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                                         <Camera size={64} className="text-primary" strokeWidth={1.5} />
                                     </div>
-                                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter mb-4">Upload or Snap Prescription</h3>
-                                    <p className="text-slate-400 font-bold text-lg max-w-sm mx-auto mb-10">Use your camera to capture the handwriting clearly. Our AI will handle the rest.</p>
+                                    <h3 className="text-4xl font-black text-slate-900 tracking-tighter mb-4">Snap or Upload</h3>
+                                    <p className="text-slate-400 font-bold text-lg max-w-sm mx-auto mb-10">Select your prescription image to begin medical extraction.</p>
                                     <button className="bg-primary text-white px-10 py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-xl shadow-primary/20 group-hover:scale-105 active:scale-95 transition-all">
-                                        Select Image File
+                                        Start Scanning
                                     </button>
                                 </div>
                                 <input
@@ -182,13 +193,13 @@ export default function ScannerPage() {
                                             {isScanning && (
                                                 <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center flex-col gap-6">
                                                     <div className="w-20 h-20 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                    <p className="text-white font-black uppercase tracking-[0.4em] text-xs">Decoding Molecules...</p>
+                                                    <p className="text-white font-black uppercase tracking-[0.4em] text-xs">AI Extraction...</p>
                                                 </div>
                                             )}
                                         </div>
                                     )}
                                     <button onClick={reset} className="w-full mt-4 py-4 text-slate-400 font-black text-[10px] uppercase tracking-widest hover:text-red-500 transition-colors">
-                                        Retake Photo
+                                        Discard and Start Over
                                     </button>
                                 </div>
                             </div>
@@ -197,11 +208,11 @@ export default function ScannerPage() {
                                 <div className="card-premium">
                                     <div className="flex items-center justify-between mb-8">
                                         <div>
-                                            <h3 className="text-2xl font-black tracking-tight">Extracted Elements</h3>
-                                            <p className="text-slate-400 text-sm font-bold">Please verify the molecule names below.</p>
+                                            <h3 className="text-2xl font-black tracking-tight">Verify Medicines</h3>
+                                            <p className="text-slate-400 text-sm font-bold">Ensure names and dosages are correct.</p>
                                         </div>
                                         <div className="w-12 h-12 bg-emerald-500/10 text-emerald-600 rounded-2xl flex items-center justify-center">
-                                            <Activity size={24} />
+                                            <Search size={24} />
                                         </div>
                                     </div>
 
@@ -219,15 +230,32 @@ export default function ScannerPage() {
                                                 key={i}
                                                 className="flex items-center justify-between p-5 bg-slate-50 border border-slate-100 rounded-2xl group hover:border-primary/20 transition-all font-bold text-slate-800"
                                             >
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
-                                                        <Pill size={18} />
+                                                {editingIndex === i ? (
+                                                    <input
+                                                        autoFocus
+                                                        type="text"
+                                                        value={editingValue}
+                                                        onChange={(e) => setEditingValue(e.target.value)}
+                                                        onBlur={() => updateMed(i, editingValue)}
+                                                        onKeyDown={(e) => e.key === 'Enter' && updateMed(i, editingValue)}
+                                                        className="flex-1 bg-white border border-primary/20 p-2 rounded-lg"
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center gap-4 flex-1 cursor-pointer" onClick={() => { setEditingIndex(i); setEditingValue(med); }}>
+                                                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                                                            <Pill size={18} />
+                                                        </div>
+                                                        {med}
                                                     </div>
-                                                    {med}
+                                                )}
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => { setEditingIndex(i); setEditingValue(med); }} className="p-3 text-slate-300 hover:text-primary transition-colors">
+                                                        <Edit2 size={18} />
+                                                    </button>
+                                                    <button onClick={() => removeMed(i)} className="p-3 text-slate-300 hover:text-red-500 transition-colors">
+                                                        <Trash2 size={18} />
+                                                    </button>
                                                 </div>
-                                                <button onClick={() => removeMed(i)} className="p-3 text-slate-300 hover:text-red-500 transition-colors">
-                                                    <Trash2 size={18} />
-                                                </button>
                                             </motion.div>
                                         ))}
 
@@ -255,7 +283,7 @@ export default function ScannerPage() {
                                         className="w-full bg-primary text-white py-6 rounded-3xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:bg-primary-hover hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:grayscale transition-all flex items-center justify-center gap-4"
                                     >
                                         <Brain size={20} />
-                                        Launch Safety Analysis
+                                        Analyze Prescription
                                     </button>
                                 </div>
                             </div>
@@ -273,20 +301,20 @@ export default function ScannerPage() {
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
                                     <div className="flex items-center gap-6">
                                         <div className="w-20 h-20 bg-primary/10 text-primary rounded-[32px] flex items-center justify-center shrink-0 border border-primary/10">
-                                            <Microscope size={40} />
+                                            <Shield size={40} />
                                         </div>
                                         <div>
-                                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Clinical Assessment</p>
-                                            <h2 className="text-4xl font-black tracking-tighter">{analysis.condition}</h2>
+                                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1">Safety Report</p>
+                                            <h2 className="text-4xl font-black tracking-tighter">{analysis.condition || "General Treatment"}</h2>
                                         </div>
                                     </div>
                                     <div className="flex gap-4">
                                         <button onClick={reset} className="bg-slate-100 text-slate-500 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all">
-                                            New Scan
+                                            Return
                                         </button>
-                                        <Link href="/vault" className="bg-primary text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-hover transition-all shadow-lg shadow-primary/20">
-                                            Archive Results
-                                        </Link>
+                                        <button className="bg-primary text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-hover transition-all shadow-lg shadow-primary/20">
+                                            Export PDF
+                                        </button>
                                     </div>
                                 </div>
 
@@ -294,17 +322,24 @@ export default function ScannerPage() {
                                     <div className="space-y-10">
                                         <div className="space-y-4">
                                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                                <Info size={14} className="text-primary" /> Core Purpose
+                                                <Info size={14} className="text-primary" /> Purpose & Insight
                                             </h4>
-                                            <p className="text-2xl font-black text-slate-800 leading-tight italic">"{analysis.purpose}"</p>
+                                            <p className="text-xl font-bold text-slate-800 leading-tight">"{analysis.purpose}"</p>
+                                            <p className="text-sm text-slate-500 font-medium leading-relaxed">{analysis.description}</p>
                                         </div>
 
-                                        <div className="bg-primary/5 p-8 rounded-[32px] border-l-8 border-primary relative overflow-hidden">
-                                            <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                <Activity size={14} /> Medical Insight
-                                            </h4>
-                                            <p className="text-base text-slate-700 font-bold leading-relaxed">{analysis.description}</p>
-                                        </div>
+                                        {analysis.sideEffects && analysis.sideEffects.length > 0 && (
+                                            <div className="bg-amber-500/5 p-8 rounded-[32px] border-l-8 border-amber-500">
+                                                <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                    <Sparkles size={14} /> Potential Side Effects
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {analysis.sideEffects.map((s, idx) => (
+                                                        <span key={idx} className="px-3 py-1 bg-white text-amber-700 text-[10px] font-black uppercase rounded-lg border border-amber-100 shadow-sm">{s}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="space-y-10">
@@ -315,9 +350,18 @@ export default function ScannerPage() {
                                             <p className="text-lg font-black text-emerald-900 italic leading-snug">{analysis.timing}</p>
                                         </div>
 
+                                        {analysis.dosageWarnings && (
+                                            <div className="bg-blue-500/5 border border-blue-500/10 p-8 rounded-[32px]">
+                                                <h4 className="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                    <Pill size={14} /> Dosage Monitoring
+                                                </h4>
+                                                <p className="text-sm font-bold text-slate-700">{analysis.dosageWarnings}</p>
+                                            </div>
+                                        )}
+
                                         <div className="bg-red-500/5 border border-red-500/10 p-8 rounded-[32px] shadow-sm">
                                             <h4 className="text-[10px] font-black text-red-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                                <AlertCircle size={14} /> Safety Risks
+                                                <AlertCircle size={14} /> Interaction Risks
                                             </h4>
                                             <ul className="space-y-3">
                                                 {analysis.risks.map((risk, i) => (

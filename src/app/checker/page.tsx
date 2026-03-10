@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
   Shield, Plus, X, Search, AlertCircle, Info, Beaker,
   GraduationCap, ChevronDown, ChevronUp, Brain, Clock,
-  Utensils, Wine, Activity, BookOpen, Camera, Trash2, AlertTriangle, Sparkles, Lock as LockIcon, Zap
+  Utensils, Wine, Activity, BookOpen, Camera, Trash2, AlertTriangle, Sparkles, Lock as LockIcon, Zap, Users
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -150,23 +150,31 @@ export default function CheckerPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => {
-                      const saved = localStorage.getItem("medisafe_vault");
-                      if (saved) {
-                        const vault = JSON.parse(saved);
-                        const names = vault.map((m: any) => m.name);
-                        if (names.length > 0) {
-                          setMedicines(names.length >= 2 ? names : [...names, ""]);
-                          setError(null);
+                      const savedProfiles = localStorage.getItem("medisafe_profiles");
+                      if (savedProfiles) {
+                        const profiles = JSON.parse(savedProfiles);
+                        if (profiles.length > 0) {
+                          // For simplicity, load the first profile or maybe show a list?
+                          // Let's just load the medications from the first profile found.
+                          const profile = profiles[0];
+                          const meds = profile.medications;
+                          if (meds && meds.length >= 2) {
+                            setMedicines(meds);
+                            setError(null);
+                          } else if (meds && meds.length < 2) {
+                            setMedicines([...meds, ""]);
+                            setError(null);
+                          }
                         } else {
-                          setError("Your vault is empty. Add medicines in the Vault tab first.");
+                          setError("No profiles found. Create one in the Patient Profiles tab.");
                         }
                       } else {
-                        setError("No vault data found. Create your profile in the Vault tab.");
+                        setError("No profiles found. Create one in the Patient Profiles tab.");
                       }
                     }}
                     className="flex items-center justify-center gap-2 py-3 bg-slate-50 rounded-xl text-[10px] font-black uppercase text-slate-500 hover:bg-slate-100 italic transition-all"
                   >
-                    <BookOpen size={14} /> From Vault
+                    <Users size={14} /> From Profile
                   </button>
                   <Link href="/scanner" className="flex items-center justify-center gap-2 py-3 bg-slate-50 rounded-xl text-[10px] font-black uppercase text-slate-500 hover:bg-slate-100 italic transition-all">
                     <Camera size={14} /> Scan Rx

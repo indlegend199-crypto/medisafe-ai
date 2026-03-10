@@ -50,7 +50,7 @@ async function fetchRxNavInteractions(rxcuis: string[]): Promise<any[]> {
     }
 }
 
-export async function analyzeInteractions(medicines: string[], isStudentMode: boolean) {
+export async function analyzeInteractions(medicines: string[], isStudentMode: boolean, patientContext?: any) {
     // 1. Get real data from RxNav
     const rxcuis = await Promise.all(medicines.map(m => getRxCUI(m)));
     const validRxcuis = rxcuis.filter(id => id !== null) as string[];
@@ -66,6 +66,12 @@ export async function analyzeInteractions(medicines: string[], isStudentMode: bo
     const prompt = `
     Analyze drug interactions for these medicines: ${medicines.join(", ")}.
     
+    ${patientContext ? `PATIENT CONTEXT:
+    - Age: ${patientContext.age}
+    - Weight: ${patientContext.weight}
+    - Conditions: ${patientContext.conditions?.join(", ")}
+    - Allergies: ${patientContext.allergies?.join(", ")}` : ""}
+
     EXPERIMENTAL DATA FROM RXNAV API:
     ${JSON.stringify(realInteractions)}
     
@@ -114,6 +120,94 @@ export async function analyzeInteractions(medicines: string[], isStudentMode: bo
     }
 }
 
+export async function analyzePatientProfile(profile: any) {
+    if (!apiKey) {
+        return {
+            safetyScore: 85,
+            overallRiskLevel: "Low",
+            summary: "Generally safe profiles with minor monitoring required.",
+            warnings: [],
+            contraindications: [],
+            allergyConflicts: []
+        };
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = `
+    Analyze the full medication safety for this patient profile:
+    - Name: ${profile.name}
+    - Age: ${profile.age}
+    - Weight: ${profile.weight}
+    - Conditions: ${profile.conditions?.join(", ")}
+    - Allergies: ${profile.allergies?.join(", ")}
+    - Medications: ${profile.medications?.join(", ")}
+
+    Evaluate:
+    1. Drug-Drug Interactions
+    2. Drug-Disease Contraindications (How meds might affect existing conditions)
+    3. Drug-Allergy Conflicts (If any meds contain allergens)
+    4. Age/Weight related dosage risks
+
+    Return JSON:
+    {
+      "safetyScore": 0-100,
+      "overallRiskLevel": "Low" | "Moderate" | "High",
+      "summary": "Brief clinical summary",
+      "warnings": ["Warning 1", "..."],
+      "contraindications": [ { "med": "...", "condition": "...", "risk": "..." } ],
+      "allergyConflicts": [ { "med": "...", "allergy": "...", "reaction": "..." } ],
+      "recommendations": ["Advice 1", "..."]
+    }
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        const jsonStr = text.match(/\{[\s\S]*\}/)?.[0] || "{}";
+        return JSON.parse(jsonStr);
+    } catch (error) {
+        return { overallRiskLevel: "Error", summary: "Failed to analyze profile." };
+    }
+}
+
+export async function askAIAssistant(query: string) {
+    if (!apiKey) {
+        return {
+            answer: "AI Assistant is currently offline. Please provide a valid Gemini API key.",
+            sections: []
+        };
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const prompt = `
+    You are MediSafe AI, a professional medical medication assistant. 
+    Answer this user query accurately based on clinical pharmacological data: "${query}"
+
+    Structure your response JSON:
+    {
+      "answer": "Direct concise answer",
+      "sections": [
+        { "title": "Interaction Risks", "content": "..." },
+        { "title": "Side Effects", "content": "..." },
+        { "title": "Dosage & Precautions", "content": "..." },
+        { "title": "Safety Recommendations", "content": "..." }
+      ],
+      "disclaimer": "This information is for educational purposes and does not replace professional medical advice."
+    }
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        const jsonStr = text.match(/\{[\s\S]*\}/)?.[0] || "{}";
+        return JSON.parse(jsonStr);
+    } catch (error) {
+        return { answer: "I encountered an error processing your request." };
+    }
+}
+
 export async function extractMedicinesFromImage(base64Image: string) {
     if (!apiKey) {
         return ["Metformin 500mg", "Atorvastatin 20mg", "Lisinopril 10mg"];
@@ -122,7 +216,7 @@ export async function extractMedicinesFromImage(base64Image: string) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const imageData = base64Image.replace(/^data:image\/\w+;base64,/, "");
 
-    const prompt = "Extract medication names and dosages. Return as JSON array of strings.";
+    const prompt = "Extract medication names and dosages from this prescription. Return as JSON array of strings.";
 
     try {
         const result = await model.generateContent([
@@ -150,7 +244,17 @@ export async function analyzePrescription(medicinesStr: string) {
     }
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const prompt = `Interpret these medicines: ${medicinesStr}. Return JSON: {condition, purpose, description, timing, risks: []}`;
+    const prompt = `Interpret these medicines: ${medicinesStr}. 
+    Provide a detailed safety report.
+    Return JSON: {
+      "condition": "...", 
+      "purpose": "...", 
+      "description": "...", 
+      "timing": "...", 
+      "risks": [], 
+      "sideEffects": [],
+      "dosageWarnings": "..."
+    }`;
 
     try {
         const result = await model.generateContent(prompt);
@@ -188,3 +292,4 @@ function getMockInteractions(medicines: string[], isStudentMode: boolean, realIn
         source: "MediSafe Offline Database"
     };
 }
+

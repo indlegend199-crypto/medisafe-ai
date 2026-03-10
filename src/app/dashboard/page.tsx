@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import {
     Shield, Activity, Calendar, AlertCircle, Pill,
     ChevronRight, Brain, Clock, Plus, ArrowUpRight,
-    User, CheckCircle, Info, X, Camera, Search, HelpCircle
+    User, CheckCircle, Info, X, Camera, Search, HelpCircle, Users
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -37,6 +37,18 @@ export default function DashboardPage() {
             icon: <Shield size={40} className="text-blue-600" />
         },
         {
+            title: "Patient Profiles",
+            desc: "Manage clinical data for everyone in your family. Automatically detect contraindications based on medical history.",
+            icon: <Users size={40} className="text-blue-600" />,
+            link: "/profiles"
+        },
+        {
+            title: "AI Health Assistant",
+            desc: "Ask complex pharmacological questions and get instant, structured clinical guidance for any medication.",
+            icon: <HelpCircle size={40} className="text-blue-600" />,
+            link: "/assistant"
+        },
+        {
             title: "Interaction Checker",
             desc: "The core of MediSafe. Enter 2-10 medicines to analyze complex physiological interactions and clinical risks.",
             icon: <Search size={40} className="text-blue-600" />,
@@ -47,12 +59,6 @@ export default function DashboardPage() {
             desc: "No more manual typing. Use your camera to scan Rx images and extract medicine names and treatment logic instantly.",
             icon: <Camera size={40} className="text-blue-600" />,
             link: "/scanner"
-        },
-        {
-            title: "Medication Vault",
-            desc: "Save your daily meds here. We'll automatically monitor for new risks and help you generate reports for your doctor.",
-            icon: <BookmarkIcon size={40} className="text-blue-600" />,
-            link: "/vault"
         }
     ];
 
@@ -182,8 +188,16 @@ export default function DashboardPage() {
                     {/* Right Column: Quick Tools & History */}
                     <div className="col-right">
                         <section className="card tools-card animate-fade-in">
-                            <h3>Quick Access Tools</h3>
+                            <h3>Quick Health Engines</h3>
                             <div className="tools-grid">
+                                <Link href="/profiles" className="tool-card-dash">
+                                    <Users size={24} />
+                                    <span>Profiles</span>
+                                </Link>
+                                <Link href="/assistant" className="tool-card-dash">
+                                    <HelpCircle size={24} />
+                                    <span>AI Assist</span>
+                                </Link>
                                 <Link href="/checker" className="tool-card-dash">
                                     <Shield size={24} />
                                     <span>Checker</span>
@@ -191,14 +205,6 @@ export default function DashboardPage() {
                                 <Link href="/scanner" className="tool-card-dash">
                                     <Camera size={24} />
                                     <span>Scan Rx</span>
-                                </Link>
-                                <Link href="/symptoms" className="tool-card-dash">
-                                    <Activity size={24} />
-                                    <span>Logs</span>
-                                </Link>
-                                <Link href="/summary" className="tool-card-dash">
-                                    <FileTextIcon size={24} />
-                                    <span>Report</span>
                                 </Link>
                             </div>
                         </section>
